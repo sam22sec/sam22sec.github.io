@@ -1,0 +1,86 @@
+#header-container{
+    top: 0;
+    position: absolute;
+}
+
+#main{
+    margin: 60px auto 0 auto;
+    max-width: 1200px;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* border: solid red; */
+    overflow-x: auto;
+}
+
+#main h1{
+    text-align: center;
+}
+
+#extLink{
+    text-align: center;
+    color: blue;
+    font-weight: bold;
+    overflow-wrap: break-word;
+}
+
+#main a {
+    overflow-wrap: break-word;
+}
+
+#main span {
+    overflow-wrap: break-word;
+}
+blockquote p{
+    font-weight: bolder;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+
+#main ul, ol{
+    margin-left: 2.5rem;
+}
+
+
+#main img{
+    width: 95%;
+    align-self: center;
+}
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+}
+
+code {
+    font-family: 'Courier New', monospace;
+}
+
+#congrt{
+    align-self: center;
+    font-weight: bolder;
+    font-family: "HanumanBold";
+    color: var(--red-orange);
+}
+
+/* Mr Robot  */
+
+.mrrobotpic0 {
+    width: 25%;
+    height: auto;
+    align-self: center;
+}
+.mrrobotpic0 img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

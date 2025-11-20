@@ -1,0 +1,21 @@
+/* Home Page Design  */
+
+#header-container{
+    top: 0;
+    position: absolute;
+}
+
+#main{
+    margin-top: 57.55px;
+}
+
+.body-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
+#footer-container{
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+}

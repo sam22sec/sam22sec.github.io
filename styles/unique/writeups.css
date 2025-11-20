@@ -1,0 +1,222 @@
+/* Home Page Design  */
+
+#header-container{
+    top: 0;
+    position: absolute;
+}
+
+#main{
+    margin-top: 57.55px;
+}
+
+/* .body-wrapper{
+    border: solid blue;
+    width: 100%;
+    height: calc(100vh - 57.55px);
+} */
+
+/* Add tab styles */
+.view-tabs {
+    display: flex;
+    justify-content: center;
+    /* margin-bottom: 20px; */
+    gap: 10px;
+}
+
+.tab-button {
+    padding: 7px 14px;
+    border: 2px solid #339af0;
+    background: rgba(24, 23, 23, 0.959);
+    color: #e6e6e6;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    background: #2a2a2a;
+}
+
+.tab-button.active {
+    background: #339af0;
+    color: #1a1a2e;
+    font-weight: bold;
+}
+
+/* Graph Design  */
+
+#graph-container {
+    width: 85vw;
+    height: 80vh;
+    border: 2px solid #339af0;
+    border-radius: 15px 15px 15px 15px;
+    background: rgba(24, 23, 23, 0.959);
+    margin: 0 auto;
+    display: none; /* Hidden by default */
+}
+
+.nodes circle {
+    cursor: grab;
+}
+
+.nodes circle:hover {
+    filter: brightness(1.2);
+}
+
+.nodes circle:active {
+    cursor: grabbing;
+}
+
+text {
+    fill: #e6e6e6;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+/* Tree View Design  */
+
+#tree-container {
+    width: 85vw;
+    height: 80vh;
+    border: 2px solid #339af0;
+    border-radius: 15px 15px 15px 15px;
+    background: rgba(24, 23, 23, 0.959);
+    margin: 0 auto;
+    padding: 20px;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    color: #e6e6e6;
+    line-height: 1.4;
+    display: block;
+}
+
+.tree-platforms-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.tree-platform-box {
+    min-width: 250px;
+    break-inside: avoid;
+}
+
+.tree-platform-header {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.tree-line {
+    white-space: pre;
+    margin: 2px 0;
+    margin-left: 20px;
+}
+
+.tree-difficulty {
+    color: #339af0;
+}
+
+.tree-machine {
+    color: #51cf66;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.tree-machine:hover {
+    color: #40a94d;
+    text-decoration: underline;
+}
+
+.tree-task:hover{
+    text-decoration: underline;
+}
+/* Platform Filters */
+.platform-filters {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(24, 23, 23, 0.8);
+    /* border-radius: 10px; */
+    /* border: 1px solid #339af0; */
+    text-align: center;
+}
+
+.filter-header {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #339af0;
+    background: rgba(24, 23, 23, 0.959);
+    color: #e6e6e6;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #2a2a2a;
+}
+
+.filter-btn.active {
+    background: #339af0;
+    color: #1a1a2e;
+    font-weight: bold;
+}
+
+/* Add this to your CSS */
+.tree-task {
+    color: #fcc419; /* Yellow color for task nodes */
+    font-style: italic;
+}
+
+/* For graph view task nodes (if you want different style) */
+.nodes circle.task {
+    fill: #fcc419;
+    stroke: #e67700;
+}
+
+/* Responsive filters */
+@media (max-width: 768px) {
+    .filter-buttons {
+        gap: 8px;
+    }
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tree-platforms-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tree-platform-box {
+        min-width: auto;
+    }
+    
+    #tree-container {
+        font-size: 12px;
+        padding: 15px;
+    }
+}

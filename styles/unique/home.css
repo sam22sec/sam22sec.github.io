@@ -1,0 +1,23 @@
+/* Home Page Design  */
+
+#header-container{
+    top: 0;
+    position: absolute;
+}
+
+#main{
+    margin-top: 57.55px;
+}
+
+
+.hero{
+    width: 100%;
+    height: calc(100vh - 61.5px);
+}
+
+.hero img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
