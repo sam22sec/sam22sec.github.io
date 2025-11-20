@@ -77,50 +77,50 @@ P{
 
 @font-face {
     font-family: 'CourierPrime';
-    src: url('../fonts/CourierPrime-Regular.ttf') format('truetype');
+    src: url('/fonts/CourierPrime-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'FlatBrush';
-    src: url('../fonts/FlatBrush-Normal.woff2') format('woff2');
+    src: url('/fonts/FlatBrush-Normal.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 @font-face {
     font-family: 'HanumanBold';
-    src: url('../fonts/Hanuman-Bold.ttf') format('truetype');
+    src: url('/fonts/Hanuman-Bold.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
 @font-face {
     font-family: 'Lato';
-    src: url('../fonts/Lato-Regular.ttf') format('truetype');
+    src: url('/fonts/Lato-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'MontserratBold';
-    src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
+    src: url('/fonts/Montserrat-Bold.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
 @font-face {
     font-family: 'OpenSans';
-    src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    src: url('/fonts/OpenSans-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'PlayfairBold';
-    src: url('../fonts/PlayfairDisplay-Bold.ttf') format('truetype');
+    src: url('/fonts/PlayfairDisplay-Bold.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
 @font-face {
     font-family: 'VarelaRound';
-    src: url('../fonts/VarelaRound-Regular.ttf') format('truetype');
+    src: url('/fonts/VarelaRound-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }

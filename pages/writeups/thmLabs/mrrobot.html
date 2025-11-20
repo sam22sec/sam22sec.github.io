@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TryHackMe | Mr Robot</title>
-    <link rel="stylesheet" href="../../../styles/base.css">
-    <link rel="stylesheet" href="../../../styles/shared/header.css">
-    <link rel="stylesheet" href="../../../styles/shared/thmLabs.css">
-    <link rel="icon" href="../../../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/shared/header.css">
+    <link rel="stylesheet" href="/styles/shared/thmLabs.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
 </head>
 
@@ -22,7 +22,7 @@
         <h1>TryHackMe | Mr Robot CTF</h1>
 
         <div class="mrrobotpic0">
-            <img src="../../../assets/images/thmImages/thm-mrrobot.png" alt="Mr Robot CTF" />
+            <img src="/assets/images/thmImages/thm-mrrobot.png" alt="Mr Robot CTF" />
         </div>
         <p id="extLink" onclick="window.open('https://tryhackme.com/room/mrrobot', '_blank')">☍ Room Link -
             "https://tryhackme.com/room/mrrobot"</p>
@@ -106,7 +106,7 @@ Nmap done: 1 IP address (1 host up) scanned in 23.22 seconds
         <p>First, Let's visit the web page. Paste <strong>"http://MACHINE_IP/"</strong> in the browser and check all the
             mentioned
             commands there. You will be surprised !!! </p>
-        <img src="../../../assets/images/thmImages/thm-mrrobot-pic1.png" alt="Mr Robot Web Site" />
+        <img src="/assets/images/thmImages/thm-mrrobot-pic1.png" alt="Mr Robot Web Site" />
         <p>Till now, I got nothing to start with. From the above link, I can see some nice videos, pictures, and
             messages from 'mr. robot'.</p>
         <br>
@@ -207,7 +207,7 @@ Finished
         <p>After visiting - <strong>"http://10.10.56.24/robots.txt"</strong>, I can see two files 'fsocity.dic' (a
             wordlist) and
             'key-1-of-3.txt' <strong>(first flag)</strong></p>
-        <img alt="Robots.txt Content" src="../../../assets/images/thmImages/thm-mrrobot-pic2.png" />
+        <img alt="Robots.txt Content" src="/assets/images/thmImages/thm-mrrobot-pic2.png" />
         <br>
         <p>☝️ Interestingly, we can directly access files like <strong>http://10.10.56.24/fsocity.dic</strong> and
             <strong>http://10.10.56.24/key-1-of-3.txt</strong>, yet they didn't appear in our gobuster results. This
@@ -255,7 +255,7 @@ Finished
             as Username and 'password' as Password. But, that was incorrect credentials and i got an error
             <strong>'ERROR: Invalid username'</strong>.
         </p>
-        <img alt="Mr Robot Pics" src="../../../assets/images/thmImages/thm-mrrobot-pic3.png" />
+        <img alt="Mr Robot Pics" src="/assets/images/thmImages/thm-mrrobot-pic3.png" />
 
         <br>
         <p>☝️ Our <strong>first objective</strong> is to identify a valid username. If the application has poor error
@@ -270,21 +270,21 @@ Finished
 
         <br>
         <p>First, fire-up the 'burpsuite' &gt; 'proxy' &gt; 'Intercept' &gt; 'Intercept on' -</p><br>
-        <img alt="Mr Robot pics4" src="../../../assets/images/thmImages/thm-mrrobot-pic4.png" />
+        <img alt="Mr Robot pics4" src="/assets/images/thmImages/thm-mrrobot-pic4.png" />
 
         <br>
         <p>Next, visit "http://10.10.56.24/wp-login.php" and from 'extensions' select 'Burp' (whatever name you have
             given during configuration). Enter 'admin' as Username and 'password' as Password. Finally, click the login
             button.</p>
         <br>
-        <img alt="Mr Robot pic5" src="../../../assets/images/thmImages/thm-mrrobot-pic5.png" />
+        <img alt="Mr Robot pic5" src="/assets/images/thmImages/thm-mrrobot-pic5.png" />
         <br>
         <p>From <strong>burpsuite</strong> , we can verify it -</p>
-        <img alt="Mr Robot pic6" src="../../../assets/images/thmImages/thm-mrrobot-pic6.png" />
+        <img alt="Mr Robot pic6" src="/assets/images/thmImages/thm-mrrobot-pic6.png" />
 
         <br>
         <p>Let's focus on the '<strong>Request</strong>' section -</p>
-        <img alt="Mr Robot pic7" src="../../../assets/images/thmImages/thm-mrrobot-pic7.png" />
+        <img alt="Mr Robot pic7" src="/assets/images/thmImages/thm-mrrobot-pic7.png" />
 
         <br>
         <p>What we need for <strong>hydra</strong> (for brute forcing) from the above outputs ?</p>
@@ -337,7 +337,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
         <p>Now, if we visit the login page again and try to login with the correct Username even with the wrong Password
             we can see a different error message this time - </p>
 
-        <img alt="Mr Robot pic8" src="../../../assets/images/thmImages/thm-mrrobot-pic8.png" />
+        <img alt="Mr Robot pic8" src="/assets/images/thmImages/thm-mrrobot-pic8.png" />
 
         <br>
         <p><strong>Bruteforcing Password with hydra using the given wordlist (shortened list) -</strong> </p>
@@ -382,14 +382,14 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
 
         <br>
         <p>Logged in with correct credentials from the last steps - </p>
-        <img alt="Mr Robot pic9" src="../../../assets/images/thmImages/thm-mrrobot-pic9.png" />
+        <img alt="Mr Robot pic9" src="/assets/images/thmImages/thm-mrrobot-pic9.png" />
 
         <br>
         <p>From Dashboard, I can see this message "WordPress 4.3.1 running Twenty Fifteen theme". I have checked the
             <strong>Appearance</strong> &gt; <strong>Themes</strong> , and it reveals the same.
         </p>
 
-        <img alt="Mr Robot pic10" src="../../../assets/images/thmImages/thm-mrrobot-pic10.png" />
+        <img alt="Mr Robot pic10" src="/assets/images/thmImages/thm-mrrobot-pic10.png" />
 
         <br>
         <p>☝️ I selected <strong>404.php</strong> for simplicity, as it's readily accessible. You can also
@@ -412,7 +412,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
             </li>
         </ul>
 
-        <img alt="Mr Robot pic11" src="../../../assets/images/thmImages/thm-mrrobot-pic11.png" />
+        <img alt="Mr Robot pic11" src="/assets/images/thmImages/thm-mrrobot-pic11.png" />
         <p>☝️ <strong>Important:</strong> Remember to replace <strong>ATTACKER_IP</strong> and <strong>PORT</strong> in
             the commands with your actual machine's IP address and chosen listener port. And finally, update the file.
         </p>
@@ -422,7 +422,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
 
         <br>
         <p>Finally, we got a shell -</p>
-        <img alt="Mr Robot pic12" src="../../../assets/images/thmImages/thm-mrrobot-pic12.png" />
+        <img alt="Mr Robot pic12" src="/assets/images/thmImages/thm-mrrobot-pic12.png" />
 
         <br>
         <h2>⚝ Initial Access</h2>
@@ -445,16 +445,16 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
             "https://linuxhandbook.com/linux-file-permissions/"</p>
         <br>
 
-        <img alt="Mr Robot" src="../../../assets/images/thmImages/thm-mrrobot-pic13.png" />
+        <img alt="Mr Robot" src="/assets/images/thmImages/thm-mrrobot-pic13.png" />
 
         <br>
         <p>Cracking the md5 hash - <a href="https://crackstation.net/" target="_blank">"https://crackstation.net/"</a>
         </p>
-        <img alt="Mr Robot pic14" src="../../../assets/images/thmImages/thm-mrrobot-pic14.png" />
+        <img alt="Mr Robot pic14" src="/assets/images/thmImages/thm-mrrobot-pic14.png" />
 
         <br>
         <p>Back to our reverse shell -</p>
-        <img alt="Mr Robot pic15" src="../../../assets/images/thmImages/thm-mrrobot-pic15.png" />
+        <img alt="Mr Robot pic15" src="/assets/images/thmImages/thm-mrrobot-pic15.png" />
 
         <p><strong>✦ Command Explanation : -</strong></p>
         <ul>
@@ -479,7 +479,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
             are executables that run with the file owner's permissions, regardless of who executes them.
         </p>
 
-        <img alt="Mr Robot pic16" src="../../../assets/images/thmImages/thm-mrrobot-pic16.png" />
+        <img alt="Mr Robot pic16" src="/assets/images/thmImages/thm-mrrobot-pic16.png" />
 
         <br>
         <p>The discovery of <strong>/usr/local/bin/nmap</strong> was particularly interesting, as this directory is
@@ -491,7 +491,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
             escalation.
         </p>
 
-        <img alt="Mr Robot pic17" src="../../../assets/images/thmImages/thm-mrrobot-pic17.png" />
+        <img alt="Mr Robot pic17" src="/assets/images/thmImages/thm-mrrobot-pic17.png" />
         <p id="extLink" onclick="window.open('https://gtfobins.github.io/gtfobins/nmap/', '_blank')">🕮 Read More -
             "https://gtfobins.github.io/gtfobins/nmap/"</p>
         <br>
@@ -500,7 +500,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
             read our final key <strong>(Third Flag)</strong>
         </p>
 
-        <img alt="Mr Robot pic18" src="../../../assets/images/thmImages/thm-mrrobot-pic18.png" />
+        <img alt="Mr Robot pic18" src="/assets/images/thmImages/thm-mrrobot-pic18.png" />
 
         <p id="congrt">💻 Happy Hacking 💻</p>
 
@@ -510,8 +510,7 @@ Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use i
     <div id="footer-container"></div>
 
     <!-- Scripts  -->
-    <script src="../../../scripts/config.js"></script>
-    <script src="../../../scripts/main.js"></script>
+    <script src="/scripts/main.js"></script>
 </body>
 
 </html>

@@ -139,7 +139,7 @@ function applyFilters() {
 
 // ===== DATA LOADING =====
 function loadData() {
-    d3.json("../scripts/manifest.json")
+    d3.json("/scripts/manifest.json")
         .then(function(data) {
             if (!data) throw new Error("Failed to load manifest.json");
             manifestData = data;
