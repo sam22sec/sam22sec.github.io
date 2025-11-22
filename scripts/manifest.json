@@ -52,6 +52,12 @@
             "title": "MrRobot",
             "url": "/pages/writeups/thmLabs/mrrobot.html",
             "platform": "thm",
+            "difficulty": "medium"
+        },
+        {
+            "title": "Thompson",
+            "url": "/pages/writeups/thmLabs/thompson.html",
+            "platform": "thm",
             "difficulty": "easy"
         },
         {
