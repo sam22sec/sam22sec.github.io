@@ -61,6 +61,12 @@
             "difficulty": "easy"
         },
         {
+            "title": "Skynet",
+            "url": "/pages/writeups/thmLabs/skynet.html",
+            "platform": "thm",
+            "difficulty": "easy"
+        },
+        {
             "title": "Challenge_1",
             "url": "machines/py_Challenge-1.html",
             "platform": "pyChallenge"

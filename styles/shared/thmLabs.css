@@ -100,3 +100,16 @@ code {
     height: 100%;
     object-fit: cover;
 }
+
+/* Skynet  */
+
+.skynet0 {
+    width: 25%;
+    height: auto;
+    align-self: center;
+}
+.skynet0 img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

