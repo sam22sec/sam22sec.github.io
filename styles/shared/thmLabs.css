@@ -50,6 +50,38 @@ blockquote p{
 #main img{
     width: 95%;
     align-self: center;
+    cursor: zoom-in;
+    transition: transform 0.3s;
+}
+
+#main img:hover {
+    transform: scale(1.02);
+}
+
+.img-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    overflow: auto;
+}
+
+.img-modal img {
+    cursor: grab;
+    transition: transform 0.3s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.img-modal img.zoomed {
+    cursor: grab;
+    position: absolute;
 }
 
 pre {
@@ -125,4 +157,11 @@ code {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+
+@media (min-width: 1024px) {
+    #main img{
+        max-width: 75%;
+    }
 }

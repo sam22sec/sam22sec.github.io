@@ -127,4 +127,56 @@ function updateCopyrightYear() {
     }
 }
 
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' && !e.target.closest('.img-modal')) {
+        const modal = document.createElement('div');
+        modal.className = 'img-modal';
+        modal.innerHTML = `<img src="${e.target.src}" alt="${e.target.alt}">`;
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+        
+        const modalImg = modal.querySelector('img');
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0, scale = 1;
+        
+        // Zoom on double click
+        modalImg.addEventListener('dblclick', function() {
+            scale = scale === 1 ? 2 : 1;
+            translateX = translateY = 0;
+            this.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            this.classList.toggle('zoomed', scale > 1);
+        });
+        
+        // Drag to pan when zoomed
+        modalImg.addEventListener('mousedown', function(e) {
+            if (scale > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                this.style.cursor = 'grabbing';
+            }
+        });
+        
+        modal.addEventListener('mousemove', function(e) {
+            if (isDragging && scale > 1) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                modalImg.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+            }
+        });
+        
+        modal.addEventListener('mouseup', function() {
+            isDragging = false;
+            modalImg.style.cursor = scale > 1 ? 'grab' : 'default';
+        });
+        
+        // Close modal
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+});
+
 document.addEventListener('DOMContentLoaded', loadComponents);
