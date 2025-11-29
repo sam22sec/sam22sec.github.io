@@ -36,7 +36,80 @@ Right Side (Impact -> Process -> Tools):
 
     3. Snippets: Finally, Snippets are the useful tools and code blocks that others can use. It's a fantastic resource, but it has the most niche appeal, making it perfect for the last spot. 
 
-# Symbols - 
-    ⚝  🕮 
 
-
+{
+    "title": "Vulnerability",
+    "url": "machines/vulnerability.html",
+    "platform": "thm",
+    "difficulty": "easy"
+},
+{
+    "title": "Antique",
+    "url": "machines/antique.html",
+    "platform": "htb",
+    "difficulty": "easy"
+},
+{
+    "title": "GameZone",
+    "url": "machines/gamezone.html",
+    "platform": "thm",
+    "difficulty": "medium"
+},
+{
+    "title": "Heist",
+    "url": "machines/heist.html",
+    "platform": "htb",
+    "difficulty": "medium"
+},
+{
+    "title": "Internal",
+    "url": "machines/internal.html",
+    "platform": "thm",
+    "difficulty": "hard"
+},
+{
+    "title": "Academy",
+    "url": "machines/academy.html",
+    "platform": "htb",
+    "difficulty": "easy"
+},
+{
+    "title": "ScriptKiddie",
+    "url": "machines/scriptkiddie.html",
+    "platform": "htb",
+    "difficulty": "medium"
+},
+{
+    "title": "PickleRick",
+    "url": "machines/picklerick.html",
+    "platform": "thm",
+    "difficulty": "easy"
+},
+{
+    "title": "Challenge_1",
+    "url": "machines/py_Challenge-1.html",
+    "platform": "pyChallenge"
+},
+{
+    "tasks": "Level_1-18",
+    "title": "Bandit",
+    "url": "machines/bandit_Level-1_18.html",
+    "platform": "OverTheWire"
+},
+{
+    "tasks": "Level_19-30",
+    "title": "Bandit",
+    "url": "machines/bandit_Level-19_30.html",
+    "platform": "OverTheWire"
+},
+{
+    "tasks": "Level_1-20",
+    "title": "Natas",
+    "url": "machines/Natas-Level_1-20.html",
+    "platform": "OverTheWire"
+},
+{
+    "title": "Leviathan",
+    "url": "machines/leviathan.html",
+    "platform": "OverTheWire"
+}

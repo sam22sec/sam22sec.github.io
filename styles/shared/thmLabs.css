@@ -48,17 +48,17 @@ blockquote p{
 
 
 #main img{
-    width: 95%;
+    width: 75%;
     align-self: center;
-    cursor: zoom-in;
-    transition: transform 0.3s;
+    /* cursor: zoom-in; */
+    /* transition: transform 0.3s; */
 }
 
-#main img:hover {
+/* #main img:hover {
     transform: scale(1.02);
-}
+} */
 
-.img-modal {
+/* .img-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -82,7 +82,7 @@ blockquote p{
 .img-modal img.zoomed {
     cursor: grab;
     position: absolute;
-}
+} */
 
 pre {
     background-color: #f4f4f4;

@@ -1,54 +1,6 @@
 {
     "machines": [
         {
-            "title": "Vulnerability",
-            "url": "machines/vulnerability.html",
-            "platform": "thm",
-            "difficulty": "easy"
-        },
-        {
-            "title": "Antique",
-            "url": "machines/antique.html",
-            "platform": "htb",
-            "difficulty": "easy"
-        },
-        {
-            "title": "GameZone",
-            "url": "machines/gamezone.html",
-            "platform": "thm",
-            "difficulty": "medium"
-        },
-        {
-            "title": "Heist",
-            "url": "machines/heist.html",
-            "platform": "htb",
-            "difficulty": "medium"
-        },
-        {
-            "title": "Internal",
-            "url": "machines/internal.html",
-            "platform": "thm",
-            "difficulty": "hard"
-        },
-        {
-            "title": "Academy",
-            "url": "machines/academy.html",
-            "platform": "htb",
-            "difficulty": "easy"
-        },
-        {
-            "title": "ScriptKiddie",
-            "url": "machines/scriptkiddie.html",
-            "platform": "htb",
-            "difficulty": "medium"
-        },
-        {
-            "title": "PickleRick",
-            "url": "machines/picklerick.html",
-            "platform": "thm",
-            "difficulty": "easy"
-        },
-        {
             "title": "MrRobot",
             "url": "/pages/writeups/thmLabs/mrrobot.html",
             "platform": "thm",
@@ -73,32 +25,34 @@
             "difficulty": "hard"
         },
         {
-            "title": "Challenge_1",
-            "url": "machines/py_Challenge-1.html",
-            "platform": "pyChallenge"
+            "tasks": "Blogger",
+            "title": "PG_Play",
+            "url": "/pages/writeups/PGplay/blogger.html",
+            "platform": "OffSec"
         },
         {
-            "tasks": "Level_1-18",
-            "title": "Bandit",
-            "url": "machines/bandit_Level-1_18.html",
-            "platform": "OverTheWire"
+            "tasks": "Gaara",
+            "title": "PG_Play",
+            "url": "/pages/writeups/PGplay/gaara.html",
+            "platform": "OffSec"
         },
         {
-            "tasks": "Level_19-30",
-            "title": "Bandit",
-            "url": "machines/bandit_Level-19_30.html",
-            "platform": "OverTheWire"
+            "tasks": "Photographer",
+            "title": "PG_Play",
+            "url": "/pages/writeups/PGplay/photographer.html",
+            "platform": "OffSec"
         },
         {
-            "tasks": "Level_1-20",
-            "title": "Natas",
-            "url": "machines/Natas-Level_1-20.html",
-            "platform": "OverTheWire"
+            "tasks": "Potato",
+            "title": "PG_Play",
+            "url": "/pages/writeups/PGplay/potato.html",
+            "platform": "OffSec"
         },
         {
-            "title": "Leviathan",
-            "url": "machines/leviathan.html",
-            "platform": "OverTheWire"
+            "tasks": "PyExp",
+            "title": "PG_Play",
+            "url": "/pages/writeups/PGplay/pyexp.html",
+            "platform": "OffSec"
         }
     ]
 }
